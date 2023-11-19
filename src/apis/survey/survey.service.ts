@@ -163,14 +163,34 @@ export class SurveyService {
       survey.status === SURVEY_STATUS.ISSUANCE ||
       survey.status === SURVEY_STATUS.COMPLETE
     )
-      throw new BadRequestException('이미 발행중인 설문입니다.');
-
-    if (survey.status === SURVEY_STATUS.COMPLETE)
-      throw new BadRequestException('이미 완료된 설문입니다.');
+      throw new BadRequestException('이미 발행 혹은 완료된 설문입니다.');
 
     const result = await this.surveyRespository.update(
       { id: adminId },
       { status: SURVEY_STATUS.ISSUANCE },
+    );
+
+    return result.affected ? true : false;
+  }
+
+  async cancellationIssue({ adminId, surveyId }): Promise<boolean> {
+    const survey = await this.findOne({ surveyId });
+    if (survey.author.id !== adminId)
+      throw new BadRequestException(
+        '본인이 제작한 설문의 정보만 수정할 수 있습니다.',
+      );
+
+    if (
+      survey.status === SURVEY_STATUS.ISSUANCE ||
+      survey.status === SURVEY_STATUS.COMPLETE
+    )
+      throw new BadRequestException(
+        '아직 발행되지 않은 혹은 완료된 설문입니다.',
+      );
+
+    const result = await this.surveyRespository.update(
+      { id: adminId },
+      { status: SURVEY_STATUS.UNISSUED },
     );
 
     return result.affected ? true : false;

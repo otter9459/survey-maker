@@ -107,7 +107,7 @@ export class SurveyResolver {
     @Args('surveyId') surveyId: string,
   ): Promise<boolean> {
     return this.surveyService.cancellationIssue({
-      id: context.req.user.id,
+      adminId: context.req.user.id,
       surveyId,
     });
   }
