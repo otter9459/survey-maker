@@ -81,7 +81,7 @@ export class SurveyResolver {
   async manualCompleteSurvey(
     @Context() context: IContext, //
     @Args('surveyId') surveyId: string,
-  ) {
+  ): Promise<boolean> {
     return this.surveyService.manualComplete({
       adminId: context.req.user.id,
       surveyId,

@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SURVEY_STATUS, Survey } from './entity/survey.entity';
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import { ISurveyServiceReturn } from './interfaces/answer-return.interface';
 
 @Injectable()
@@ -130,5 +130,25 @@ export class SurveyService {
     );
 
     return result.affected ? true : false;
+  }
+
+  async manualComplete({ adminId, surveyId }): Promise<boolean> {
+    const survey = await this.findOne({ surveyId });
+    if (survey.author.id !== adminId)
+      throw new BadRequestException(
+        '본인이 제작한 설문의 정보만 수정할 수 있습니다.',
+      );
+
+    let result: UpdateResult;
+    if (survey.status !== SURVEY_STATUS.COMPLETE) {
+      result = await this.surveyRespository.update(
+        { id: surveyId },
+        { status: SURVEY_STATUS.COMPLETE },
+      );
+    } else {
+      throw new BadRequestException('이미 완료된 설문입니다.');
+    }
+
+    return result?.affected ? true : false;
   }
 }
