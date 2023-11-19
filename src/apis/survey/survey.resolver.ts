@@ -4,6 +4,7 @@ import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
 import { Survey } from './entity/survey.entity';
 import { IContext } from 'src/commons/interfaces/context';
+import { CreateSurveyInput } from './dto/create-survey.input';
 
 @Resolver()
 export class SurveyResolver {
