@@ -32,7 +32,7 @@ export class SurveyService {
   }
 
   async fetchComplete({ adminId, surveyId, version }) {
-    // 미완성, 답변까지 모두 제작되면 진행
+    // 미완성, 답변까지 모두 제작되면 진행 - feature#5 브랜치
     const survey = await this.findOne({ surveyId });
     if (survey.author.id !== adminId)
       throw new BadRequestException(

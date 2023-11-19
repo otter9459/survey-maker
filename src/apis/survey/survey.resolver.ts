@@ -33,7 +33,7 @@ export class SurveyResolver {
     @Args('surveyId') surveyId: string,
     @Args('version', { type: () => 'decimal' }) version: number,
   ) {
-    // 미완성, 답변까지 모두 제작되면 진행
+    // 미완성, 답변까지 모두 제작되면 진행 - feature#5 브랜치
     return this.surveyService.fetchComplete({
       adminId: context.req.user.id,
       surveyId,
