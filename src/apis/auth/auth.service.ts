@@ -30,7 +30,7 @@ export class AuthService {
   getAccessToken({ user }: IAuthServiceGetAccessToken): string {
     return this.jwtService.sign(
       { sub: user.id },
-      { secret: process.env.JWT_ACCESS_KEY, expiresIn: '1d' },
+      { secret: process.env.JWT_ACCESS_KEY, expiresIn: '1d' }, // 원활한 테스트를 위해 긴 유효기간 적용
     );
   }
 }
