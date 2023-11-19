@@ -51,7 +51,7 @@ export class Survey {
   @Field(() => Number)
   target_number: number;
 
-  @ManyToOne(() => Admin, (author) => author.surveys)
+  @ManyToOne(() => Admin, (author) => author.surveys, { onDelete: 'CASCADE' })
   @Field(() => Admin)
   author: Admin;
 
