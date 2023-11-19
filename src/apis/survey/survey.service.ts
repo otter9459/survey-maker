@@ -10,6 +10,10 @@ export class SurveyService {
     private readonly surveyRespository: Repository<Survey>,
   ) {}
 
+  async findOne({ surveyId }): Promise<Survey> {
+    return this.surveyRespository.findOne({ where: { id: surveyId } });
+  }
+
   async create({ context, createSurveyInput }): Promise<Survey> {
     const { title, description, target_number } = createSurveyInput;
     const isExist = await this.surveyRespository.find({ where: { title } });
