@@ -40,4 +40,12 @@ export class AdminResolver {
       newPassword,
     });
   }
+
+  @UseGuards(GqlAuthGuard('admin'))
+  @Mutation(() => Boolean)
+  async resignAdmin(
+    @Context() context: IContext, //
+  ): Promise<boolean> {
+    return this.adminService.resign({ id: context.req.user.id });
+  }
 }

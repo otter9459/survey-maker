@@ -5,10 +5,13 @@ import { Question } from '../../question/entity/question.entity';
 import { Response } from '../../response/entity/response.entity';
 import {
   Column,
+  CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 export enum SURVEY_STATUS {
@@ -50,6 +53,15 @@ export class Survey {
   @Column()
   @Field(() => Number)
   target_number: number;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt: Date;
 
   @ManyToOne(() => Admin, (author) => author.surveys, { onDelete: 'CASCADE' })
   @Field(() => Admin)

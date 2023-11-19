@@ -65,4 +65,10 @@ export class AdminService {
 
     return result.affected ? true : false;
   }
+
+  async resign({ id }): Promise<boolean> {
+    const resignResult = await this.adminRepository.softDelete({ id });
+
+    return resignResult.affected ? true : false;
+  }
 }
