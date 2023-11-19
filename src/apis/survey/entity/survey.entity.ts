@@ -64,7 +64,6 @@ export class Survey {
   deletedAt: Date;
 
   @ManyToOne(() => Admin, (author) => author.surveys, { onDelete: 'CASCADE' })
-  @Field(() => Admin)
   author: Admin;
 
   @OneToMany(() => Question, (question) => question.survey)
