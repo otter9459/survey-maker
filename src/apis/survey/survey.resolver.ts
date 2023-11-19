@@ -90,11 +90,11 @@ export class SurveyResolver {
 
   @UseGuards(GqlAuthGuard('admin'))
   @Mutation(() => Boolean)
-  async reverseSurveyStatus(
+  async issuanceSurvey(
     @Context() context: IContext, //
     @Args('surveyId') surveyId: string,
-  ) {
-    return this.surveyService.reverseStatus({
+  ): Promise<boolean> {
+    return this.surveyService.issuance({
       adminId: context.req.user.id,
       surveyId,
     });
