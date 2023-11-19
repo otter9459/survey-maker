@@ -1,6 +1,11 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Survey } from './entity/survey.entity';
+import { SURVEY_STATUS, Survey } from './entity/survey.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -11,7 +16,10 @@ export class SurveyService {
   ) {}
 
   async findOne({ surveyId }): Promise<Survey> {
-    return this.surveyRespository.findOne({ where: { id: surveyId } });
+    return this.surveyRespository.findOne({
+      where: { id: surveyId },
+      relations: ['questions', 'questions.options'],
+    });
   }
 
   async fetchList({ page }): Promise<Survey[]> {
@@ -21,6 +29,28 @@ export class SurveyService {
       skip: (page - 1) * 10,
       take: 10,
     });
+  }
+
+  async fetchComplete({ adminId, surveyId, version }) {
+    // 미완성, 답변까지 모두 제작되면 진행
+    const survey = await this.findOne({ surveyId });
+    if (survey.author.id !== adminId)
+      throw new BadRequestException(
+        '본인이 제작한 설문의 결과만 볼 수 있습니다.',
+      );
+
+    if (survey.status !== SURVEY_STATUS.COMPLETE && version !== survey.version)
+      throw new ForbiddenException('해당 설문은 완료되지 않았습니다.');
+
+    // const list = await this.surveyRespository.findOne({
+    //   where: { id: surveyId, responses: { survey_version: version } },
+    //   relations: ['responses', 'responses.responseDetails'],
+    // });
+
+    // list.responses[0].responseDetails[0].option_content;
+    // list.responses[0].responseDetails[0].question_content;
+    // list.responses[0].responseDetails[0].score;
+    // 위 세가지를 사용해서 문항 정리, 선택지 정리, 선택지 비율 계산, 총점 평균 계산 알고리즘 제작 필요
   }
 
   async create({ context, createSurveyInput }): Promise<Survey> {

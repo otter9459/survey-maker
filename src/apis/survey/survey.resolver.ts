@@ -27,6 +27,21 @@ export class SurveyResolver {
   }
 
   @UseGuards(GqlAuthGuard('admin'))
+  @Query(() => Survey)
+  async fetchCompleteSurvey(
+    @Context() context: IContext, //
+    @Args('surveyId') surveyId: string,
+    @Args('version', { type: () => 'decimal' }) version: number,
+  ) {
+    // 미완성, 답변까지 모두 제작되면 진행
+    return this.surveyService.fetchComplete({
+      adminId: context.req.user.id,
+      surveyId,
+      version,
+    });
+  }
+
+  @UseGuards(GqlAuthGuard('admin'))
   @Mutation(() => Survey)
   async createSurvey(
     @Context() context: IContext, //
