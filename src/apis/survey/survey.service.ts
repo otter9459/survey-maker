@@ -7,6 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { SURVEY_STATUS, Survey } from './entity/survey.entity';
 import { Repository } from 'typeorm';
+import { ISurveyServiceReturn } from './interfaces/answer-return.interface';
 
 @Injectable()
 export class SurveyService {
@@ -15,19 +16,28 @@ export class SurveyService {
     private readonly surveyRespository: Repository<Survey>,
   ) {}
 
-  async findOne({ surveyId }): Promise<Survey> {
-    return this.surveyRespository.findOne({
+  async findOne({ surveyId }): Promise<ISurveyServiceReturn> {
+    const result = await this.surveyRespository.findOne({
       where: { id: surveyId },
-      relations: ['questions', 'questions.options'],
+      relations: ['questions', 'questions.options', 'responses'],
     });
+
+    return { ...result, respondant: result.responses.length };
   }
 
-  async fetchList({ page }): Promise<Survey[]> {
-    return this.surveyRespository.find({
-      relations: ['questions', 'questions.options'],
+  async fetchList({ page }): Promise<ISurveyServiceReturn[]> {
+    const results = await this.surveyRespository.find({
+      relations: ['questions', 'questions.options', 'responses'],
       order: { createdAt: 'DESC' },
       skip: (page - 1) * 10,
       take: 10,
+    });
+
+    return results.map((survey) => {
+      const respondant = survey.responses.filter(
+        (response) => response.survey_version === survey.version,
+      ).length;
+      return { ...survey, respondant };
     });
   }
 
@@ -85,7 +95,7 @@ export class SurveyService {
       relations: ['responses'],
     });
 
-    if (respondant >= target_number) {
+    if (respondant.responses.length >= target_number) {
       await this.surveyRespository.update(
         { id },
         { status: SURVEY_STATUS.COMPLETE },

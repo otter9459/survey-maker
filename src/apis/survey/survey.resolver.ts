@@ -6,6 +6,7 @@ import { Survey } from './entity/survey.entity';
 import { IContext } from 'src/commons/interfaces/context';
 import { CreateSurveyInput } from './dto/create-survey.input';
 import { UpdateSurveyInput } from './dto/update-survey.input';
+import { ISurveyServiceReturn } from './interfaces/answer-return.interface';
 
 @Resolver()
 export class SurveyResolver {
@@ -16,14 +17,14 @@ export class SurveyResolver {
   @Query(() => Survey)
   async fetchSurvey(
     @Args('surveyId') surveyId: string, //
-  ): Promise<Survey> {
+  ): Promise<ISurveyServiceReturn> {
     return this.surveyService.findOne({ surveyId });
   }
 
   @Query(() => [Survey])
   async fetchSurveyList(
     @Args('page') page: number, //
-  ): Promise<Survey[]> {
+  ): Promise<ISurveyServiceReturn[]> {
     return this.surveyService.fetchList({ page });
   }
 
@@ -32,7 +33,7 @@ export class SurveyResolver {
   async fetchCompleteSurvey(
     @Context() context: IContext, //
     @Args('surveyId') surveyId: string,
-    @Args('version', { type: () => 'decimal' }) version: number,
+    @Args('version') version: number,
   ) {
     // 미완성, 답변까지 모두 제작되면 진행 - feature#5 브랜치
     return this.surveyService.fetchComplete({
