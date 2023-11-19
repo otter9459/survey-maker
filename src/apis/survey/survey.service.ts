@@ -73,7 +73,7 @@ export class SurveyService {
     const survey = await this.findOne({ surveyId: id });
     if (survey.author.id !== adminId)
       throw new BadRequestException(
-        '본인이 제작한 설문의 정보만 수정할 수 있습니다. 볼 수 있습니다.',
+        '본인이 제작한 설문의 정보만 수정할 수 있습니다.',
       );
 
     const isExist = await this.surveyRespository.find({ where: { title } });
@@ -85,13 +85,38 @@ export class SurveyService {
       relations: ['responses'],
     });
 
-    if (respondant >= target_number) null;
-    // 현재 참여자 수보다 입력된 target_number가 작을 경우
-    // 상태를 complete로 변경하는 로직
+    if (respondant >= target_number) {
+      await this.surveyRespository.update(
+        { id },
+        { status: SURVEY_STATUS.COMPLETE },
+      );
+    }
 
     const result = await this.surveyRespository.update(
       { id },
       { ...survey, ...updateSurveyInput },
+    );
+
+    return result.affected ? true : false;
+  }
+
+  async updateVersion({ adminId, surveyId }): Promise<boolean> {
+    const survey = await this.findOne({ surveyId });
+    if (survey.author.id !== adminId)
+      throw new BadRequestException(
+        '본인이 제작한 설문의 정보만 수정할 수 있습니다.',
+      );
+
+    if (survey.status !== SURVEY_STATUS.UNISSUED) {
+      await this.surveyRespository.update(
+        { id: surveyId },
+        { status: SURVEY_STATUS.ISSUANCE },
+      );
+    }
+
+    const result = await this.surveyRespository.update(
+      { id: surveyId },
+      { version: survey.version + 0.1 },
     );
 
     return result.affected ? true : false;
