@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ResponseDetailResolver } from './response_detail.resolver';
+import { ResponseDetailResolver } from './responseDetail.resolver';
 
 describe('ResponseDetailResolver', () => {
   let resolver: ResponseDetailResolver;

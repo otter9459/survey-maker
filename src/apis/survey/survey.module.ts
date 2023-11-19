@@ -3,6 +3,6 @@ import { SurveyResolver } from './survey.resolver';
 import { SurveyService } from './survey.service';
 
 @Module({
-  providers: [SurveyResolver, SurveyService]
+  providers: [SurveyResolver, SurveyService],
 })
 export class SurveyModule {}
