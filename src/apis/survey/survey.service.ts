@@ -78,7 +78,7 @@ export class SurveyService {
   }
 
   async update({ adminId, updateSurveyInput }): Promise<boolean> {
-    const { id, title, target_number } = updateSurveyInput;
+    const { id, title } = updateSurveyInput;
 
     const survey = await this.findOne({ surveyId: id });
     if (survey.author.id !== adminId)
@@ -90,17 +90,10 @@ export class SurveyService {
     if (isExist.length)
       throw new ConflictException('같은 제목의 설문이 존재합니다.');
 
-    const respondant = await this.surveyRespository.findOne({
-      where: { id },
-      relations: ['responses'],
-    });
-
-    if (respondant.responses.length >= target_number) {
-      await this.surveyRespository.update(
-        { id },
-        { status: SURVEY_STATUS.COMPLETE },
+    if (survey.status === SURVEY_STATUS.COMPLETE)
+      throw new BadRequestException(
+        '완료된 설문은 수정이 불가능합니다. 버전을 업데이트 해주세요.',
       );
-    }
 
     const result = await this.surveyRespository.update(
       { id },
@@ -120,7 +113,7 @@ export class SurveyService {
     if (survey.status !== SURVEY_STATUS.UNISSUED) {
       await this.surveyRespository.update(
         { id: surveyId },
-        { status: SURVEY_STATUS.ISSUANCE },
+        { status: SURVEY_STATUS.UNISSUED },
       );
     }
 
