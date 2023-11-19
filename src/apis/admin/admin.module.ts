@@ -11,5 +11,6 @@ import { Admin } from './entity/admin.entity';
     ]),
   ],
   providers: [AdminResolver, AdminService],
+  exports: [AdminService],
 })
 export class AdminModule {}

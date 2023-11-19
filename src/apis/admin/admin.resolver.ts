@@ -17,7 +17,7 @@ export class AdminResolver {
   @Mutation(() => Admin)
   async createAdmin(
     @Args('createAdminInput') createAdminInput: CreateAdminInput,
-  ) {
+  ): Promise<Admin> {
     return this.adminService.create({ createAdminInput });
   }
 }
