@@ -28,7 +28,6 @@ export class User {
   email: string;
 
   @Column()
-  @Field(() => String)
   password: string;
 
   @OneToMany(() => Response, (response) => response.survey)
