@@ -49,4 +49,16 @@ export class SurveyResolver {
   ): Promise<Survey> {
     return this.surveyService.create({ context, createSurveyInput });
   }
+
+  @UseGuards(GqlAuthGuard('admin'))
+  @Mutation(() => Boolean)
+  async updateSurvey(
+    @Context() context: IContext, //
+    @Args('updateSurveyInput') updateSurveyInput: UpdateSurveyInput,
+  ): Promise<boolean> {
+    return this.surveyService.update({
+      adminId: context.req.user.id,
+      updateSurveyInput,
+    });
+  }
 }
