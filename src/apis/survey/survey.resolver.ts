@@ -5,6 +5,7 @@ import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
 import { Survey } from './entity/survey.entity';
 import { IContext } from 'src/commons/interfaces/context';
 import { CreateSurveyInput } from './dto/create-survey.input';
+import { UpdateSurveyInput } from './dto/update-survey.input';
 
 @Resolver()
 export class SurveyResolver {
