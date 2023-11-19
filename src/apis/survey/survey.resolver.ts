@@ -62,4 +62,16 @@ export class SurveyResolver {
       updateSurveyInput,
     });
   }
+
+  @UseGuards(GqlAuthGuard('admin'))
+  @Mutation(() => Boolean)
+  async updateSurveyVersion(
+    @Context() context: IContext, //
+    @Args('surveyId') surveyId: string,
+  ): Promise<boolean> {
+    return this.surveyService.updateVersion({
+      adminId: context.req.user.id,
+      surveyId,
+    });
+  }
 }
