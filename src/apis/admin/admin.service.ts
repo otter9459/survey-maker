@@ -11,6 +11,10 @@ export class AdminService {
     private readonly adminRepository: Repository<Admin>, //
   ) {}
 
+  async findOneByEmail({ email }) {
+    return this.adminRepository.findOne({ where: { email } });
+  }
+
   async create({ createAdminInput }) {
     const { name, email, password } = createAdminInput;
 
