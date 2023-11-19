@@ -99,4 +99,16 @@ export class SurveyResolver {
       surveyId,
     });
   }
+
+  @UseGuards(GqlAuthGuard('admin'))
+  @Mutation(() => Boolean)
+  async cancellationIssueSurvey(
+    @Context() context: IContext, //
+    @Args('surveyId') surveyId: string,
+  ): Promise<boolean> {
+    return this.surveyService.cancellationIssue({
+      id: context.req.user.id,
+      surveyId,
+    });
+  }
 }
