@@ -66,4 +66,34 @@ export class SurveyService {
       author: context,
     });
   }
+
+  async update({ adminId, updateSurveyInput }): Promise<boolean> {
+    const { id, title, target_number } = updateSurveyInput;
+
+    const survey = await this.findOne({ surveyId: id });
+    if (survey.author.id !== adminId)
+      throw new BadRequestException(
+        '본인이 제작한 설문의 정보만 수정할 수 있습니다. 볼 수 있습니다.',
+      );
+
+    const isExist = await this.surveyRespository.find({ where: { title } });
+    if (isExist.length)
+      throw new ConflictException('같은 제목의 설문이 존재합니다.');
+
+    const respondant = await this.surveyRespository.findOne({
+      where: { id },
+      relations: ['responses'],
+    });
+
+    if (respondant >= target_number) null;
+    // 현재 참여자 수보다 입력된 target_number가 작을 경우
+    // 상태를 complete로 변경하는 로직
+
+    const result = await this.surveyRespository.update(
+      { id },
+      { ...survey, ...updateSurveyInput },
+    );
+
+    return result.affected ? true : false;
+  }
 }
