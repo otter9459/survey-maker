@@ -75,4 +75,16 @@ export class SurveyResolver {
       surveyId,
     });
   }
+
+  @UseGuards(GqlAuthGuard('admin'))
+  @Mutation(() => Boolean)
+  async manualCompleteSurvey(
+    @Context() context: IContext, //
+    @Args('surveyId') surveyId: string,
+  ) {
+    return this.surveyService.manualComplete({
+      adminId: context.req.user.id,
+      surveyId,
+    });
+  }
 }
