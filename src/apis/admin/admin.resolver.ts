@@ -26,4 +26,18 @@ export class AdminResolver {
   ): Promise<Admin> {
     return this.adminService.create({ createAdminInput });
   }
+
+  @UseGuards(GqlAuthGuard('admin'))
+  @Mutation(() => Boolean)
+  async updateAdminPassword(
+    @Context() context: IContext, //
+    @Args('currentPassword') currentPassword: string,
+    @Args('newPassword') newPassword: string,
+  ): Promise<boolean> {
+    return this.adminService.updatePassword({
+      email: context.req.user.email,
+      currentPassword,
+      newPassword,
+    });
+  }
 }

@@ -1,4 +1,8 @@
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AdminService } from '../admin/admin.service';
 import * as bcrypt from 'bcrypt';
@@ -15,14 +19,11 @@ export class AuthService {
     const admin = await this.adminService.findOneByEmail({ email });
 
     if (!admin)
-      throw new UnprocessableEntityException(
-        '존재하지 않는 관리자 이메일입니다.',
-      );
+      throw new NotFoundException('존재하지 않는 관리자 이메일입니다.');
 
     const isAuth = await bcrypt.compare(password, admin.password);
 
-    if (!isAuth)
-      throw new UnprocessableEntityException('암호를 확인해 주세요.');
+    if (!isAuth) throw new BadRequestException('암호를 확인해 주세요.');
 
     return this.getAccessToken({ user: admin });
   }
