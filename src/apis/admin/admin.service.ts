@@ -11,6 +11,10 @@ export class AdminService {
     private readonly adminRepository: Repository<Admin>, //
   ) {}
 
+  async findOne({ id }): Promise<Admin> {
+    return this.adminRepository.findOne({ where: { id } });
+  }
+
   async findOneByEmail({ email }): Promise<Admin> {
     return this.adminRepository.findOne({ where: { email } });
   }
