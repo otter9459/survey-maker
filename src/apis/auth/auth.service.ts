@@ -2,6 +2,7 @@ import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AdminService } from '../admin/admin.service';
 import * as bcrypt from 'bcrypt';
+import { IAuthServiceGetAccessToken } from './interfaces/auth-service.interface';
 
 @Injectable()
 export class AuthService {
@@ -26,7 +27,7 @@ export class AuthService {
     return this.getAccessToken({ user: admin });
   }
 
-  getAccessToken({ user }): string {
+  getAccessToken({ user }: IAuthServiceGetAccessToken): string {
     return this.jwtService.sign(
       { sub: user.id },
       { secret: process.env.JWT_ACCESS_KEY, expiresIn: '1d' },

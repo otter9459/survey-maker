@@ -11,11 +11,11 @@ export class AdminService {
     private readonly adminRepository: Repository<Admin>, //
   ) {}
 
-  async findOneByEmail({ email }) {
+  async findOneByEmail({ email }): Promise<Admin> {
     return this.adminRepository.findOne({ where: { email } });
   }
 
-  async create({ createAdminInput }) {
+  async create({ createAdminInput }): Promise<Admin> {
     const { name, email, password } = createAdminInput;
 
     const exist = await this.adminRepository.find({ where: { email } });
