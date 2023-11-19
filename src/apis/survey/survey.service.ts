@@ -165,6 +165,16 @@ export class SurveyService {
     )
       throw new BadRequestException('이미 발행 혹은 완료된 설문입니다.');
 
+    if (survey.questions.length < 1)
+      throw new BadRequestException('각 설문은 최소 하나의 문항이 필요합니다.');
+
+    const optionExist = survey.questions.filter((el) => el.options.length < 2);
+
+    if (optionExist.length)
+      throw new BadRequestException(
+        '각 문항은 두 개 이상의 선택지가 필요합니다.',
+      );
+
     const result = await this.surveyRespository.update(
       { id: adminId },
       { status: SURVEY_STATUS.ISSUANCE },
