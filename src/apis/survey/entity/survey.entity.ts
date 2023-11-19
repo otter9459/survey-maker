@@ -68,7 +68,7 @@ export class Survey {
 
   @OneToMany(() => Question, (question) => question.survey)
   @Field(() => [Question], { nullable: true })
-  quesitons: Question[];
+  questions: Question[];
 
   @OneToMany(() => Response, (response) => response.survey)
   @Field(() => [Response], { nullable: true })

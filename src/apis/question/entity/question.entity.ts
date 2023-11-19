@@ -31,7 +31,7 @@ export class Question {
   @Field(() => Boolean)
   redundant: boolean;
 
-  @ManyToOne(() => Survey, (survey) => survey.quesitons)
+  @ManyToOne(() => Survey, (survey) => survey.questions)
   @Field(() => Survey)
   survey: Survey;
 

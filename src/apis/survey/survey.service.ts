@@ -14,6 +14,15 @@ export class SurveyService {
     return this.surveyRespository.findOne({ where: { id: surveyId } });
   }
 
+  async fetchList({ page }): Promise<Survey[]> {
+    return this.surveyRespository.find({
+      relations: ['questions', 'questions.options'],
+      order: { createdAt: 'DESC' },
+      skip: (page - 1) * 10,
+      take: 10,
+    });
+  }
+
   async create({ context, createSurveyInput }): Promise<Survey> {
     const { title, description, target_number } = createSurveyInput;
     const isExist = await this.surveyRespository.find({ where: { title } });

@@ -19,6 +19,13 @@ export class SurveyResolver {
     return this.surveyService.findOne({ surveyId });
   }
 
+  @Query(() => [Survey])
+  async fetchSurveyList(
+    @Args('page') page: number, //
+  ): Promise<Survey[]> {
+    return this.surveyService.fetchList({ page });
+  }
+
   @UseGuards(GqlAuthGuard('admin'))
   @Mutation(() => Survey)
   async createSurvey(
