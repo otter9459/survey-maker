@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SURVEY_STATUS, Survey } from './entity/survey.entity';
-import { Not, Repository, UpdateResult } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { ISurveyServiceReturn } from './interfaces/survey-return.interface';
 
 @Injectable()
@@ -77,15 +77,9 @@ export class SurveyService {
     });
   }
 
-  async update({ adminId, surveyId, updateSurveyInput }): Promise<boolean> {
+  async update({ surveyId, updateSurveyInput }): Promise<boolean> {
     const { title, target_number } = updateSurveyInput;
     const survey = await this.findOne({ surveyId });
-
-    if (survey.author.id !== adminId) {
-      throw new BadRequestException(
-        '본인이 제작한 설문의 정보만 수정할 수 있습니다.',
-      );
-    }
 
     if (title) {
       const isExist = await this.surveyRespository.find({
@@ -105,7 +99,11 @@ export class SurveyService {
 
     if (survey.status === SURVEY_STATUS.COMPLETE) {
       throw new BadRequestException(
-        '완료된 설문은 수정이 불가능합니다. 버전 업데이트 혹은 발행을 취소 해주세요.',
+        '완료된 설문은 수정이 불가능합니다. 설문지 버전 업데이트 후 재시도 해주세요.',
+      );
+    } else if (survey.status === SURVEY_STATUS.ISSUANCE && survey.respondant) {
+      throw new BadRequestException(
+        '발행된 설문에 참여자가 존재하는 경우 내용을 수정할 수 없습니다. 설문을 종료, 버전 업데이트 후 재시도 해주세요.',
       );
     }
 
@@ -117,24 +115,20 @@ export class SurveyService {
     return result.affected ? true : false;
   }
 
-  // 필요한가..? 어차피 완료되거나 발행하지 않는 설문들은 발행을 새로 해야하고
-  async updateVersion({ adminId, surveyId }): Promise<boolean> {
+  async updateVersion({ surveyId }): Promise<boolean> {
     const survey = await this.findOne({ surveyId });
 
-    if (survey.author.id !== adminId) {
+    if (survey.status === SURVEY_STATUS.ISSUANCE && survey.respondant) {
       throw new BadRequestException(
-        '본인이 제작한 설문의 정보만 수정할 수 있습니다.',
-      );
-    }
-
-    if (survey.status === SURVEY_STATUS.ISSUANCE) {
-      throw new BadRequestException(
-        '발행중인 설문은 버전을 변경할 수 없습니다.',
+        '발행된 설문에 참여자가 존재하는 경우 버전을 변경할 수 없습니다. 설문을 종료해 주세요.',
       );
     } else if (survey.status === SURVEY_STATUS.COMPLETE) {
       await this.surveyRespository.update(
         { id: surveyId },
-        { status: SURVEY_STATUS.UNISSUED, version: survey.version + 0.1 },
+        {
+          status: SURVEY_STATUS.UNISSUED,
+          version: Number(survey.version) + 0.1,
+        },
       );
     } else {
       await this.surveyRespository.save({
@@ -146,40 +140,29 @@ export class SurveyService {
     return true;
   }
 
-  async manualComplete({ adminId, surveyId }): Promise<boolean> {
+  async manualComplete({ surveyId }): Promise<boolean> {
     const survey = await this.findOne({ surveyId });
-    if (survey.author.id !== adminId)
-      throw new BadRequestException(
-        '본인이 제작한 설문의 정보만 수정할 수 있습니다.',
-      );
 
-    let result: UpdateResult;
-    if (survey.status !== SURVEY_STATUS.COMPLETE) {
-      result = await this.surveyRespository.update(
-        { id: surveyId },
-        { status: SURVEY_STATUS.COMPLETE },
-      );
-    } else {
+    if (survey.status === SURVEY_STATUS.COMPLETE) {
       throw new BadRequestException('이미 완료된 설문입니다.');
     }
+    if (survey.status === SURVEY_STATUS.UNISSUED) {
+      throw new BadRequestException('발행되지 않은 설문입니다.');
+    }
+
+    const result = await this.surveyRespository.update(
+      { id: surveyId },
+      { status: SURVEY_STATUS.COMPLETE },
+    );
 
     return result?.affected ? true : false;
   }
 
-  async issuance({ adminId, surveyId }): Promise<boolean> {
+  async issuance({ surveyId }): Promise<boolean> {
     const survey = await this.findOne({ surveyId });
-    if (survey.author.id !== adminId)
-      throw new BadRequestException(
-        '본인이 제작한 설문의 정보만 수정할 수 있습니다.',
-      );
 
-    if (
-      survey.status === SURVEY_STATUS.ISSUANCE ||
-      survey.status === SURVEY_STATUS.COMPLETE
-    )
-      throw new BadRequestException(
-        '이미 발행 혹은 완료된 설문입니다. 재발행은 버전을 업데이트 해주세요.',
-      );
+    if (survey.status === SURVEY_STATUS.ISSUANCE)
+      throw new BadRequestException('이미 발행되어 있는 설문입니다.');
 
     if (survey.questions.length < 1)
       throw new BadRequestException('각 설문은 최소 하나의 문항이 필요합니다.');
@@ -192,31 +175,8 @@ export class SurveyService {
       );
 
     const result = await this.surveyRespository.update(
-      { id: adminId },
+      { id: surveyId },
       { status: SURVEY_STATUS.ISSUANCE, version: Number(survey.version) + 0.1 },
-    );
-
-    return result.affected ? true : false;
-  }
-
-  async cancellationIssue({ adminId, surveyId }): Promise<boolean> {
-    const survey = await this.findOne({ surveyId });
-    if (survey.author.id !== adminId)
-      throw new BadRequestException(
-        '본인이 제작한 설문의 정보만 수정할 수 있습니다.',
-      );
-
-    if (
-      survey.status === SURVEY_STATUS.UNISSUED ||
-      survey.status === SURVEY_STATUS.COMPLETE
-    )
-      throw new BadRequestException(
-        '아직 발행되지 않은 혹은 완료된 설문입니다.',
-      );
-
-    const result = await this.surveyRespository.update(
-      { id: adminId },
-      { status: SURVEY_STATUS.UNISSUED },
     );
 
     return result.affected ? true : false;

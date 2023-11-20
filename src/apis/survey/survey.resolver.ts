@@ -58,12 +58,10 @@ export class SurveyResolver {
   @UseGuards(GqlAuthGuard('admin'))
   @Mutation(() => Boolean)
   async updateSurvey(
-    @Context() context: IContext, //
     @Args('surveyId') surveyId: string,
     @Args('updateSurveyInput') updateSurveyInput: UpdateSurveyInput,
   ): Promise<boolean> {
     return this.surveyService.update({
-      adminId: context.req.user.id,
       surveyId,
       updateSurveyInput,
     });
@@ -72,11 +70,9 @@ export class SurveyResolver {
   @UseGuards(GqlAuthGuard('admin'))
   @Mutation(() => Boolean)
   async updateSurveyVersion(
-    @Context() context: IContext, //
     @Args('surveyId') surveyId: string,
   ): Promise<boolean> {
     return this.surveyService.updateVersion({
-      adminId: context.req.user.id,
       surveyId,
     });
   }
@@ -84,11 +80,9 @@ export class SurveyResolver {
   @UseGuards(GqlAuthGuard('admin'))
   @Mutation(() => Boolean)
   async manualCompleteSurvey(
-    @Context() context: IContext, //
     @Args('surveyId') surveyId: string,
   ): Promise<boolean> {
     return this.surveyService.manualComplete({
-      adminId: context.req.user.id,
       surveyId,
     });
   }
@@ -96,23 +90,9 @@ export class SurveyResolver {
   @UseGuards(GqlAuthGuard('admin'))
   @Mutation(() => Boolean)
   async issuanceSurvey(
-    @Context() context: IContext, //
-    @Args('surveyId') surveyId: string,
+    @Args('surveyId') surveyId: string, //
   ): Promise<boolean> {
     return this.surveyService.issuance({
-      adminId: context.req.user.id,
-      surveyId,
-    });
-  }
-
-  @UseGuards(GqlAuthGuard('admin'))
-  @Mutation(() => Boolean)
-  async cancellationIssueSurvey(
-    @Context() context: IContext, //
-    @Args('surveyId') surveyId: string,
-  ): Promise<boolean> {
-    return this.surveyService.cancellationIssue({
-      adminId: context.req.user.id,
       surveyId,
     });
   }
