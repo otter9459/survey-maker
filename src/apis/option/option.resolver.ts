@@ -27,4 +27,13 @@ export class OptionResolver {
   ): Promise<Option> {
     return this.optionService.create({ questionId, createOptionInput });
   }
+
+  @UseGuards(GqlAuthGuard('admin'))
+  @Mutation(() => Boolean)
+  async updateOption(
+    @Args('optionId') optionId: string,
+    @Args('updateOptionInput') updateOptionInput: UpdateOptionInput,
+  ): Promise<boolean> {
+    return this.optionService.update({ optionId, updateOptionInput });
+  }
 }
