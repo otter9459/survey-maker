@@ -39,4 +39,18 @@ export class UserResolver {
       updateUserInput,
     });
   }
+
+  @UseGuards(GqlAuthGuard('access'))
+  @Mutation(() => Boolean)
+  async updateUserPassword(
+    @Context() context: IContext, //
+    @Args('currentPassword') currentPassword: string,
+    @Args('newPassword') newPassword: string,
+  ): Promise<boolean> {
+    return this.userService.updatePassword({
+      email: context.req.user.email,
+      currentPassword,
+      newPassword,
+    });
+  }
 }
