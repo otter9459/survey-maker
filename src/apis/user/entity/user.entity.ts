@@ -1,6 +1,14 @@
 import { IsInt, Min } from 'class-validator';
 import { Response } from '../../response/entity/response.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 export enum USER_GENDER {
@@ -40,6 +48,15 @@ export class User {
 
   @Column()
   password: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt: Date;
 
   @OneToMany(() => Response, (response) => response.survey)
   @Field(() => [Response], { nullable: true })
