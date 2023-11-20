@@ -27,7 +27,9 @@ export class Response {
   @Field(() => Number)
   survey_version: number;
 
-  @ManyToOne(() => Survey, (survey) => survey.responses)
+  @ManyToOne(() => Survey, (survey) => survey.responses, {
+    onDelete: 'CASCADE',
+  })
   @Field(() => Survey)
   survey: Survey;
 

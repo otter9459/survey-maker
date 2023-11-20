@@ -31,7 +31,9 @@ export class Question {
   @Field(() => Boolean)
   redundant: boolean;
 
-  @ManyToOne(() => Survey, (survey) => survey.questions)
+  @ManyToOne(() => Survey, (survey) => survey.questions, {
+    onDelete: 'CASCADE',
+  })
   @Field(() => Survey)
   survey: Survey;
 

@@ -35,7 +35,9 @@ export class Option {
   @Column({ type: 'enum', enum: OPTION_SCORE })
   score: OPTION_SCORE;
 
-  @ManyToOne(() => Question, (question) => question.options)
+  @ManyToOne(() => Question, (question) => question.options, {
+    onDelete: 'CASCADE',
+  })
   @Field(() => Question)
   question: Question;
 }
