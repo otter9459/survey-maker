@@ -18,6 +18,13 @@ export class QuestionService {
     private readonly surveyService: SurveyService,
   ) {}
 
+  async fetchOne({ questionId }): Promise<Question> {
+    return this.questionRepository.findOne({
+      where: { id: questionId },
+      relations: ['options'],
+    });
+  }
+
   async create({
     createQuestionInput,
   }: IQuestionServiceCreate): Promise<Question> {
