@@ -1,4 +1,4 @@
-import { Args, Context, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
 import { QuestionService } from './question.service';
 import { Question } from './entity/question.entity';
 import { UseGuards } from '@nestjs/common';

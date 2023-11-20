@@ -22,14 +22,14 @@ export class Question {
   content: string;
 
   @IsInt({ message: 'Target number must be an integer.' })
-  @Min(1, { message: 'Target number must be greater than or equal to 1.' })
+  @Min(0, { message: 'Target number must be greater than or equal to 0.' })
   @Column()
   @Field(() => Number)
   fixed_order: number;
 
   @Column({ default: false })
   @Field(() => Boolean)
-  redundant: boolean;
+  multiple: boolean;
 
   @ManyToOne(() => Survey, (survey) => survey.questions, {
     onDelete: 'CASCADE',
