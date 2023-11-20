@@ -36,4 +36,12 @@ export class QuestionResolver {
   ): Promise<boolean> {
     return this.questionService.update({ questionId, updateQuestionInput });
   }
+
+  @UseGuards(GqlAuthGuard('admin'))
+  @Mutation(() => Boolean)
+  async deleteQuestion(
+    @Args('questionId') questionId: string, //
+  ): Promise<boolean> {
+    return this.questionService.delete({ questionId });
+  }
 }
