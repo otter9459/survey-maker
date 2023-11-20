@@ -26,4 +26,13 @@ export class QuestionResolver {
   ): Promise<Question> {
     return this.questionService.create({ createQuestionInput });
   }
+
+  @UseGuards(GqlAuthGuard('admin'))
+  @Mutation(() => Boolean)
+  async updateQuestion(
+    @Args('questionId') questionId: string,
+    @Args('updateQuestionInput') updateQuestionInput: UpdateQuestionInput,
+  ) {
+    return this.questionService.update({ updateQuestionInput });
+  }
 }
