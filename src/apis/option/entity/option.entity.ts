@@ -1,7 +1,15 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { IsInt, Min } from 'class-validator';
 import { Question } from '../../question/entity/question.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 export enum OPTION_SCORE {
   ONE = 1,
@@ -27,13 +35,22 @@ export class Option {
   content: string;
 
   @IsInt({ message: 'Target number must be an integer.' })
-  @Min(1, { message: 'Target number must be greater than or equal to 1.' })
+  @Min(0, { message: 'Target number must be greater than or equal to 0.' })
   @Column()
   @Field(() => Number)
   fixed_order: number;
 
   @Column({ type: 'enum', enum: OPTION_SCORE })
   score: OPTION_SCORE;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt: Date;
 
   @ManyToOne(() => Question, (question) => question.options, {
     onDelete: 'CASCADE',
