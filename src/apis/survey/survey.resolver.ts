@@ -121,7 +121,7 @@ export class SurveyResolver {
   async deleteSurvey(
     @Context() context: IContext, //
     @Args('surveyId') surveyId: string,
-  ) {
+  ): Promise<boolean> {
     return this.surveyService.delete({
       adminId: context.req.user.id,
       surveyId,

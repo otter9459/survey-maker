@@ -198,4 +198,16 @@ export class SurveyService {
 
     return result.affected ? true : false;
   }
+
+  async delete({ adminId, surveyId }): Promise<boolean> {
+    const survey = await this.findOne({ surveyId });
+    if (survey.author.id !== adminId)
+      throw new BadRequestException(
+        '본인이 제작한 설문의 정보만 삭제할 수 있습니다.',
+      );
+
+    const result = await this.surveyRespository.softDelete({ id: surveyId });
+
+    return result.affected ? true : false;
+  }
 }
