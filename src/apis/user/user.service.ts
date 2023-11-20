@@ -11,6 +11,10 @@ export class UserService {
     private readonly userRepository: Repository<User>,
   ) {}
 
+  async findOneByEmail({ email }): Promise<User> {
+    return this.userRepository.findOne({ where: { email } });
+  }
+
   async create({ createUserInput }): Promise<User> {
     const { name, age, gender, email, password } = createUserInput;
 
