@@ -1,4 +1,4 @@
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { QuestionService } from './question.service';
 import { Question } from './entity/question.entity';
 import { UseGuards } from '@nestjs/common';
@@ -10,6 +10,14 @@ export class QuestionResolver {
   constructor(
     private readonly questionService: QuestionService, //
   ) {}
+
+  @UseGuards(GqlAuthGuard('admin'))
+  @Query(() => Question)
+  async fetchQuestion(
+    @Args('questionId') questionId: string,
+  ): Promise<Question> {
+    return this.questionService.fetchOne({ questionId });
+  }
 
   @UseGuards(GqlAuthGuard('admin'))
   @Mutation(() => Question)
