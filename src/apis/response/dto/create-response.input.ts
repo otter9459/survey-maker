@@ -5,6 +5,6 @@ export class CreateResponseInput {
   @Field(() => String)
   questionId: string;
 
-  @Field(() => String)
-  optionId: string;
+  @Field(() => [String])
+  optionId: string[];
 }

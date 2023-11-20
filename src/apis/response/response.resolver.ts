@@ -4,6 +4,7 @@ import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
 import { IContext } from 'src/commons/interfaces/context';
 import { CreateResponseInput } from './dto/create-response.input';
+import { Response } from './entity/response.entity';
 
 @Resolver()
 export class ResponseResolver {
@@ -12,13 +13,13 @@ export class ResponseResolver {
   ) {}
 
   @UseGuards(GqlAuthGuard('access'))
-  @Mutation(() => Boolean)
+  @Mutation(() => Response)
   async createResponse(
     @Context() context: IContext,
     @Args('surveyId') surveyId: string,
     @Args('createResponseInput', { type: () => [CreateResponseInput] })
     createResponseInput: CreateResponseInput[],
-  ): Promise<boolean> {
+  ): Promise<Response> {
     return this.responseService.create({
       userId: context.req.user.id,
       surveyId,

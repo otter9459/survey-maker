@@ -1,8 +1,15 @@
 import { Module } from '@nestjs/common';
-import { ResponseDetailResolver } from './responseDetail.resolver';
 import { ResponseDetailService } from './responseDetail.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ResponseDetail } from './entity/responseDetail.entity';
 
 @Module({
-  providers: [ResponseDetailResolver, ResponseDetailService],
+  imports: [
+    TypeOrmModule.forFeature([
+      ResponseDetail, //
+    ]),
+  ],
+  providers: [ResponseDetailService],
+  exports: [ResponseDetailService],
 })
 export class ResponseDetailModule {}

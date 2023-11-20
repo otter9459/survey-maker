@@ -12,6 +12,7 @@ import { QuestionModule } from './apis/question/question.module';
 import { OptionModule } from './apis/option/option.module';
 import { UserModule } from './apis/user/user.module';
 import { ResponseModule } from './apis/response/response.module';
+import { ResponseDetailModule } from './apis/responseDetail/responseDetail.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { ResponseModule } from './apis/response/response.module';
     OptionModule,
     QuestionModule,
     ResponseModule,
+    ResponseDetailModule,
     SurveyModule,
     UserModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
