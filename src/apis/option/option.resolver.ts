@@ -1,4 +1,4 @@
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { OptionService } from './option.service';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
@@ -10,6 +10,14 @@ export class OptionResolver {
   constructor(
     private readonly optionService: OptionService, //
   ) {}
+
+  @UseGuards(GqlAuthGuard('admin'))
+  @Query(() => Option)
+  async fetchOption(
+    @Args('optionId') optionId: string, //
+  ): Promise<Option> {
+    return this.optionService.fetchOne({ optionId });
+  }
 
   @UseGuards(GqlAuthGuard('admin'))
   @Mutation(() => Option)
