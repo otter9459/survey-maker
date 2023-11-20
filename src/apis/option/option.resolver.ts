@@ -4,6 +4,7 @@ import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
 import { Option } from './entity/option.entity';
 import { CreateOptionInput } from './dto/create-option.input';
+import { UpdateOptionInput } from './dto/update-option.input';
 
 @Resolver()
 export class OptionResolver {
