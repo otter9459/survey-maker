@@ -26,4 +26,16 @@ export class UserResolver {
   ): Promise<User> {
     return this.userService.create({ createUserInput });
   }
+
+  @UseGuards(GqlAuthGuard('access'))
+  @Mutation(() => Boolean)
+  async updateUser(
+    @Context() context: IContext, //
+    @Args('updateUserInput') updateUserInput: UpdateUserInput,
+  ): Promise<boolean> {
+    return this.userService.update({
+      userId: context.req.user.id,
+      updateUserInput,
+    });
+  }
 }
