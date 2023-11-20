@@ -9,11 +9,13 @@ import { join } from 'path';
 import { AuthModule } from './apis/auth/auth.module';
 import { SurveyModule } from './apis/survey/survey.module';
 import { QuestionModule } from './apis/question/question.module';
+import { OptionModule } from './apis/option/option.module';
 
 @Module({
   imports: [
     AdminModule,
     AuthModule,
+    OptionModule,
     QuestionModule,
     SurveyModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({

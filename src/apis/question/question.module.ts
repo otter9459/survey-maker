@@ -13,5 +13,6 @@ import { SurveyModule } from '../survey/survey.module';
     SurveyModule,
   ],
   providers: [QuestionResolver, QuestionService],
+  exports: [QuestionService],
 })
 export class QuestionModule {}
