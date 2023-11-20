@@ -1,7 +1,5 @@
-import { InputType, OmitType, PartialType } from '@nestjs/graphql';
+import { InputType, PartialType } from '@nestjs/graphql';
 import { CreateQuestionInput } from './create-question.input';
 
 @InputType()
-export class UpdateQuestionInput extends PartialType(
-  OmitType(CreateQuestionInput, ['surveyId']),
-) {}
+export class UpdateQuestionInput extends PartialType(CreateQuestionInput) {}

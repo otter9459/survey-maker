@@ -4,7 +4,6 @@ import { Survey } from '../../survey/entity/survey.entity';
 import {
   Column,
   CreateDateColumn,
-  DeleteDateColumn,
   Entity,
   ManyToOne,
   OneToMany,
@@ -39,9 +38,6 @@ export class Question {
 
   @UpdateDateColumn()
   updatedAt: Date;
-
-  @DeleteDateColumn()
-  deletedAt: Date;
 
   @ManyToOne(() => Survey, (survey) => survey.questions, {
     onDelete: 'CASCADE',

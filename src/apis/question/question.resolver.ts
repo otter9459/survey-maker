@@ -23,9 +23,10 @@ export class QuestionResolver {
   @UseGuards(GqlAuthGuard('admin'))
   @Mutation(() => Question)
   async createQuestion(
+    @Args('surveyId') surveyId: string, //
     @Args('createQuestionInput') createQuestionInput: CreateQuestionInput,
   ): Promise<Question> {
-    return this.questionService.create({ createQuestionInput });
+    return this.questionService.create({ surveyId, createQuestionInput });
   }
 
   @UseGuards(GqlAuthGuard('admin'))

@@ -4,7 +4,6 @@ import { Question } from '../../question/entity/question.entity';
 import {
   Column,
   CreateDateColumn,
-  DeleteDateColumn,
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -49,9 +48,6 @@ export class Option {
 
   @UpdateDateColumn()
   updatedAt: Date;
-
-  @DeleteDateColumn()
-  deletedAt: Date;
 
   @ManyToOne(() => Question, (question) => question.options, {
     onDelete: 'CASCADE',

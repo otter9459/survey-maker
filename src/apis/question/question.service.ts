@@ -27,9 +27,10 @@ export class QuestionService {
   }
 
   async create({
+    surveyId,
     createQuestionInput,
   }: IQuestionServiceCreate): Promise<Question> {
-    const { content, fixed_order, multiple, surveyId } = createQuestionInput;
+    const { content, fixed_order, multiple } = createQuestionInput;
 
     const survey = await this.surveyService.findOne({ surveyId });
     if (!survey)
@@ -79,7 +80,7 @@ export class QuestionService {
   }
 
   async delete({ questionId }): Promise<boolean> {
-    const result = await this.questionRepository.softDelete({ id: questionId });
+    const result = await this.questionRepository.delete({ id: questionId });
     return result.affected ? true : false;
   }
 }

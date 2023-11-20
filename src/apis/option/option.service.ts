@@ -74,4 +74,9 @@ export class OptionService {
 
     return result.affected ? true : false;
   }
+
+  async delete({ optionId }): Promise<boolean> {
+    const result = await this.optionRepository.delete({ id: optionId });
+    return result.affected ? true : false;
+  }
 }
