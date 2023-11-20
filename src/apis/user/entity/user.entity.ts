@@ -1,7 +1,17 @@
 import { IsInt, Min } from 'class-validator';
 import { Response } from '../../response/entity/response.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+
+export enum USER_GENDER {
+  MALE = 'MALE',
+  FEMALE = 'FEMALE',
+  NONE = 'NONE',
+}
+
+registerEnumType(USER_GENDER, {
+  name: 'USER_GENDER',
+});
 
 @Entity()
 @ObjectType()
@@ -20,9 +30,9 @@ export class User {
   @Field(() => Number)
   age: number;
 
-  @Column()
-  @Field(() => String)
-  gender: string;
+  @Column({ type: 'enum', enum: USER_GENDER })
+  @Field(() => USER_GENDER)
+  gender: USER_GENDER;
 
   @Column()
   @Field(() => String)
