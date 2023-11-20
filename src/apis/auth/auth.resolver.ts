@@ -14,4 +14,12 @@ export class AuthResolver {
   ): Promise<string> {
     return this.authService.loginAdmin({ email, password });
   }
+
+  @Mutation(() => String)
+  async loginUser(
+    @Args('email') email: string,
+    @Args('password') password: string,
+  ): Promise<string> {
+    return this.authService.loginUser({ email, password });
+  }
 }
