@@ -1,4 +1,4 @@
-import { Min } from 'class-validator';
+import { IsInt, Min } from 'class-validator';
 import { Response } from '../../response/entity/response.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Field, ObjectType } from '@nestjs/graphql';
@@ -14,7 +14,8 @@ export class User {
   @Field(() => String)
   name: string;
 
-  @Min(0)
+  @IsInt({ message: 'Target number must be an integer.' })
+  @Min(1, { message: 'Target number must be greater than or equal to 1.' })
   @Column()
   @Field(() => Number)
   age: number;
