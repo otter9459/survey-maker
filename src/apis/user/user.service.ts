@@ -11,6 +11,13 @@ export class UserService {
     private readonly userRepository: Repository<User>,
   ) {}
 
+  async findOne({ id }): Promise<User> {
+    return this.userRepository.findOne({
+      where: { id },
+      relations: ['responses'],
+    });
+  }
+
   async findOneByEmail({ email }): Promise<User> {
     return this.userRepository.findOne({ where: { email } });
   }
