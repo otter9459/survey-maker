@@ -37,4 +37,12 @@ export class OptionResolver {
   ): Promise<boolean> {
     return this.optionService.update({ optionId, updateOptionInput });
   }
+
+  @UseGuards(GqlAuthGuard('admin'))
+  @Mutation(() => Boolean)
+  async deleteOption(
+    @Args('optionId') optionId: string, //
+  ): Promise<boolean> {
+    return this.optionService.delete({ optionId });
+  }
 }
