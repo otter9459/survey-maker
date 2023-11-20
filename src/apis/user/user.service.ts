@@ -39,4 +39,13 @@ export class UserService {
       password: hashedPassword,
     });
   }
+
+  async update({ userId, updateUserInput }): Promise<boolean> {
+    const result = await this.userRepository.update(
+      { id: userId },
+      { ...updateUserInput },
+    );
+
+    return result.affected ? true : false;
+  }
 }

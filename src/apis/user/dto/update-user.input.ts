@@ -3,5 +3,5 @@ import { CreateUserInput } from './create-user.input';
 
 @InputType()
 export class UpdateUserInput extends PartialType(
-  OmitType(CreateUserInput, ['email']),
+  OmitType(CreateUserInput, ['email', 'password']),
 ) {}
