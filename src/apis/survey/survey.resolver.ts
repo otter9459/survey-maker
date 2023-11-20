@@ -14,6 +14,7 @@ export class SurveyResolver {
     private readonly surveyService: SurveyService, //
   ) {}
 
+  // 조회 관련 API
   @Query(() => Survey)
   async fetchSurvey(
     @Args('surveyId') surveyId: string, //
@@ -43,6 +44,7 @@ export class SurveyResolver {
     });
   }
 
+  // 생성 관련 API
   @UseGuards(GqlAuthGuard('admin'))
   @Mutation(() => Survey)
   async createSurvey(
@@ -52,6 +54,7 @@ export class SurveyResolver {
     return this.surveyService.create({ context, createSurveyInput });
   }
 
+  // 수정 관련 API
   @UseGuards(GqlAuthGuard('admin'))
   @Mutation(() => Boolean)
   async updateSurvey(
@@ -107,6 +110,19 @@ export class SurveyResolver {
     @Args('surveyId') surveyId: string,
   ): Promise<boolean> {
     return this.surveyService.cancellationIssue({
+      adminId: context.req.user.id,
+      surveyId,
+    });
+  }
+
+  // 삭제 관련 API
+  @UseGuards(GqlAuthGuard('admin'))
+  @Mutation(() => Boolean)
+  async deleteSurvey(
+    @Context() context: IContext, //
+    @Args('surveyId') surveyId: string,
+  ) {
+    return this.surveyService.delete({
       adminId: context.req.user.id,
       surveyId,
     });
