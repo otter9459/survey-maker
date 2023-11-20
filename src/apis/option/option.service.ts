@@ -17,6 +17,10 @@ export class OptionService {
     private readonly questionService: QuestionService,
   ) {}
 
+  async fetchOne({ optionId }): Promise<Option> {
+    return this.optionRepository.findOne({ where: { id: optionId } });
+  }
+
   async create({ questionId, createOptionInput }): Promise<Option> {
     const { content, fixed_order, score } = createOptionInput;
 
