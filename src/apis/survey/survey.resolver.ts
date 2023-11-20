@@ -6,7 +6,7 @@ import { Survey } from './entity/survey.entity';
 import { IContext } from 'src/commons/interfaces/context';
 import { CreateSurveyInput } from './dto/create-survey.input';
 import { UpdateSurveyInput } from './dto/update-survey.input';
-import { ISurveyServiceReturn } from './interfaces/answer-return.interface';
+import { ISurveyServiceReturn } from './interfaces/survey-return.interface';
 
 @Resolver()
 export class SurveyResolver {

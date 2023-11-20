@@ -7,7 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { SURVEY_STATUS, Survey } from './entity/survey.entity';
 import { Not, Repository, UpdateResult } from 'typeorm';
-import { ISurveyServiceReturn } from './interfaces/answer-return.interface';
+import { ISurveyServiceReturn } from './interfaces/survey-return.interface';
 
 @Injectable()
 export class SurveyService {

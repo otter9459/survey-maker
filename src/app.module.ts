@@ -10,6 +10,7 @@ import { AuthModule } from './apis/auth/auth.module';
 import { SurveyModule } from './apis/survey/survey.module';
 import { QuestionModule } from './apis/question/question.module';
 import { OptionModule } from './apis/option/option.module';
+import { UserModule } from './apis/user/user.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { OptionModule } from './apis/option/option.module';
     OptionModule,
     QuestionModule,
     SurveyModule,
+    UserModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/commons/graphql/schema.gql'),
