@@ -77,4 +77,9 @@ export class QuestionService {
 
     return result.affected ? true : false;
   }
+
+  async delete({ questionId }): Promise<boolean> {
+    const result = await this.questionRepository.softDelete({ id: questionId });
+    return result.affected ? true : false;
+  }
 }

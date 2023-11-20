@@ -3,10 +3,13 @@ import { Option } from '../../option/entity/option.entity';
 import { Survey } from '../../survey/entity/survey.entity';
 import {
   Column,
+  CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Field, ObjectType } from '@nestjs/graphql';
 
@@ -30,6 +33,15 @@ export class Question {
   @Column({ default: false })
   @Field(() => Boolean)
   multiple: boolean;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt: Date;
 
   @ManyToOne(() => Survey, (survey) => survey.questions, {
     onDelete: 'CASCADE',
