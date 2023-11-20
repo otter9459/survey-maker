@@ -8,11 +8,13 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { AuthModule } from './apis/auth/auth.module';
 import { SurveyModule } from './apis/survey/survey.module';
+import { QuestionModule } from './apis/question/question.module';
 
 @Module({
   imports: [
     AdminModule,
     AuthModule,
+    QuestionModule,
     SurveyModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,

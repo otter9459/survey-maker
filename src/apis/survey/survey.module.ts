@@ -11,5 +11,6 @@ import { Survey } from './entity/survey.entity';
     ]),
   ],
   providers: [SurveyResolver, SurveyService],
+  exports: [SurveyService],
 })
 export class SurveyModule {}

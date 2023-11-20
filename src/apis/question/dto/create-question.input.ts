@@ -13,4 +13,7 @@ export class CreateQuestionInput {
 
   @Field(() => Boolean)
   multiple: boolean;
+
+  @Field(() => String)
+  surveyId: string;
 }
