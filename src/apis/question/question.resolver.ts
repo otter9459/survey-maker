@@ -4,6 +4,7 @@ import { Question } from './entity/question.entity';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
 import { CreateQuestionInput } from './dto/create-question.input';
+import { UpdateQuestionInput } from './dto/update-question.input';
 
 @Resolver()
 export class QuestionResolver {
@@ -32,7 +33,7 @@ export class QuestionResolver {
   async updateQuestion(
     @Args('questionId') questionId: string,
     @Args('updateQuestionInput') updateQuestionInput: UpdateQuestionInput,
-  ) {
-    return this.questionService.update({ updateQuestionInput });
+  ): Promise<boolean> {
+    return this.questionService.update({ questionId, updateQuestionInput });
   }
 }

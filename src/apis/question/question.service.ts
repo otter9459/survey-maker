@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { SurveyService } from '../survey/survey.service';
 import { IQuestionServiceCreate } from './interfaces/question-service.interface';
 import { InjectRepository } from '@nestjs/typeorm';
+import { SURVEY_STATUS } from '../survey/entity/survey.entity';
 
 @Injectable()
 export class QuestionService {
@@ -47,5 +48,33 @@ export class QuestionService {
       multiple,
       survey,
     });
+  }
+
+  async update({ questionId, updateQuestionInput }): Promise<boolean> {
+    const { fixed_order } = updateQuestionInput;
+
+    const question = await this.questionRepository.findOne({
+      where: { id: questionId },
+      relations: ['survey', 'survey.questions'],
+    });
+
+    if (question.survey.status !== SURVEY_STATUS.UNISSUED)
+      throw new BadRequestException(
+        '발행 상태인 설문의 문항은 수정이 불가능합니다.',
+      );
+
+    const exist = question.survey.questions.find(
+      (el) => el.fixed_order === fixed_order,
+    );
+
+    if (exist)
+      throw new BadRequestException('이미 해당 번호를 가진 문항이 존재합니다.');
+
+    const result = await this.questionRepository.update(
+      { id: questionId },
+      { ...updateQuestionInput },
+    );
+
+    return result.affected ? true : false;
   }
 }

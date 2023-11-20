@@ -32,7 +32,7 @@ export class Survey {
   id: string;
 
   @Min(0)
-  @Column({ type: 'decimal', precision: 10, scale: 1, default: 0.1 })
+  @Column({ type: 'decimal', precision: 10, scale: 1, default: 0.0 })
   @Field(() => Number)
   version: number;
 

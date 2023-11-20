@@ -59,10 +59,12 @@ export class SurveyResolver {
   @Mutation(() => Boolean)
   async updateSurvey(
     @Context() context: IContext, //
+    @Args('surveyId') surveyId: string,
     @Args('updateSurveyInput') updateSurveyInput: UpdateSurveyInput,
   ): Promise<boolean> {
     return this.surveyService.update({
       adminId: context.req.user.id,
+      surveyId,
       updateSurveyInput,
     });
   }
