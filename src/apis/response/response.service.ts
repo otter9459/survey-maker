@@ -267,4 +267,12 @@ export class ResponseService {
 
     return result.affected ? true : false;
   }
+
+  async deleteAllOfMine({ userId }): Promise<boolean> {
+    const result = await this.responseRepository.delete({
+      user: { id: userId },
+    });
+
+    return result.affected ? true : false;
+  }
 }
