@@ -11,6 +11,17 @@ export class ResponseResolver {
   constructor(
     private readonly responseService: ResponseService, //
   ) {}
+  @UseGuards(GqlAuthGuard('access'))
+  @Mutation(() => Response)
+  async fetchResponseOfMine(
+    @Context() context: IContext,
+    @Args('responseId') responseId: string,
+  ): Promise<Response> {
+    return this.responseService.fetchOne({
+      userId: context.req.user.id,
+      responseId,
+    });
+  }
 
   @UseGuards(GqlAuthGuard('access'))
   @Mutation(() => Response)
