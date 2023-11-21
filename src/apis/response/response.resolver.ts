@@ -50,4 +50,16 @@ export class ResponseResolver {
       createResponseInput,
     });
   }
+
+  @UseGuards(GqlAuthGuard('access'))
+  @Mutation(() => Boolean)
+  async updateResponse(
+    @Context() context: IContext,
+    @Args('responseId') responseId: string,
+  ): Promise<boolean> {
+    return this.responseService.update({
+      userId: context.req.user.id,
+      responseId,
+    });
+  }
 }
