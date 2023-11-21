@@ -5,6 +5,7 @@ import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
 import { IContext } from 'src/commons/interfaces/context';
 import { CreateResponseInput } from './dto/create-response.input';
 import { Response } from './entity/response.entity';
+import { UpdateResponseInput } from './dto/update-response.input';
 
 @Resolver()
 export class ResponseResolver {
@@ -56,6 +57,7 @@ export class ResponseResolver {
   async updateResponse(
     @Context() context: IContext,
     @Args('responseId') responseId: string,
+    @Args('updateResponseInput') updateResponseInput: UpdateResponseInput,
   ): Promise<boolean> {
     return this.responseService.update({
       userId: context.req.user.id,
