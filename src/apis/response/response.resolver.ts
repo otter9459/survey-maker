@@ -1,4 +1,4 @@
-import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ResponseService } from './response.service';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
@@ -11,8 +11,9 @@ export class ResponseResolver {
   constructor(
     private readonly responseService: ResponseService, //
   ) {}
+
   @UseGuards(GqlAuthGuard('access'))
-  @Mutation(() => Response)
+  @Query(() => Response)
   async fetchResponseOfMine(
     @Context() context: IContext,
     @Args('responseId') responseId: string,

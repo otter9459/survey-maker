@@ -20,6 +20,21 @@ export class ResponseService {
     private readonly responseDetailService: ResponseDetailService,
   ) {}
 
+  async fetchOne({ userId, responseId }): Promise<Response> {
+    const responseData = await this.responseRepository.findOne({
+      where: { id: responseId },
+      relations: ['user', 'responseDetails'],
+    });
+
+    if (!responseData)
+      throw new NotFoundException('해당 답변 정보가 존재하지 않습니다.');
+
+    if (responseData.user.id !== userId)
+      throw new BadRequestException('본인의 답변만 조회할 수 있습니다.');
+
+    return responseData;
+  }
+
   async create({ userId, surveyId, createResponseInput }): Promise<Response> {
     const survey = await this.surveyService.findOne({ surveyId });
     if (!survey)
@@ -86,6 +101,10 @@ export class ResponseService {
       survey: surveyId,
     });
 
+    const totalScore = responseDetails.reduce((acc, cur) => {
+      return acc + cur.score;
+    }, 0);
+
     const completeReponseDetails =
       await this.responseDetailService.createResponseDetail({
         responseDetails,
@@ -95,6 +114,7 @@ export class ResponseService {
       ...newResponse,
       survey_title: survey.title,
       survey_version: survey.version,
+      total_score: totalScore,
       responseDetails: completeReponseDetails,
     });
   }
