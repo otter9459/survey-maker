@@ -25,6 +25,18 @@ export class ResponseResolver {
   }
 
   @UseGuards(GqlAuthGuard('access'))
+  @Query(() => Response)
+  async fetchResponseOfMineList(
+    @Context() context: IContext,
+    @Args('page') page: number,
+  ): Promise<Response> {
+    return this.responseService.fetchAll({
+      userId: context.req.user.id,
+      page,
+    });
+  }
+
+  @UseGuards(GqlAuthGuard('access'))
   @Mutation(() => Response)
   async createResponse(
     @Context() context: IContext,
