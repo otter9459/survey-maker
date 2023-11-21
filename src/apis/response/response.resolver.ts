@@ -66,4 +66,16 @@ export class ResponseResolver {
       updateResponseInput,
     });
   }
+
+  @UseGuards(GqlAuthGuard('access'))
+  @Mutation(() => Boolean)
+  async deleteResponse(
+    @Context() context: IContext,
+    @Args('responseId') responseId: string,
+  ): Promise<boolean> {
+    return this.responseService.delete({
+      userId: context.req.user.id,
+      responseId,
+    });
+  }
 }
