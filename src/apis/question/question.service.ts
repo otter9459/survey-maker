@@ -59,7 +59,7 @@ export class QuestionService {
       relations: ['survey', 'survey.questions'],
     });
 
-    if (question.survey.status !== SURVEY_STATUS.UNISSUED)
+    if (question.survey.status === SURVEY_STATUS.ISSUANCE)
       throw new BadRequestException(
         '발행 상태인 설문의 문항은 수정이 불가능합니다.',
       );

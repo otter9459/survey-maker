@@ -59,7 +59,7 @@ export class SurveyService {
 
     // list.responses[0].responseDetails[0].option_content;
     // list.responses[0].responseDetails[0].question_content;
-    // list.responses[0].responseDetails[0].score;
+    // list.responses[0].total_score;
     // 위 세가지를 사용해서 문항 정리, 선택지 정리, 선택지 비율 계산, 총점 평균 계산 알고리즘 제작 필요
   }
 

@@ -23,7 +23,12 @@ export class ResponseService {
   async fetchOne({ userId, responseId }): Promise<Response> {
     const responseData = await this.responseRepository.findOne({
       where: { id: responseId },
-      relations: ['user', 'survey', 'responseDetails'],
+      relations: [
+        'user',
+        'survey',
+        'responseDetails',
+        'responseDetails.option_content',
+      ],
     });
 
     if (!responseData)
@@ -55,6 +60,16 @@ export class ResponseService {
         '발행 상태가 아닌 설문은 참여할 수 없습니다.',
       );
 
+    const isExist = await this.responseRepository.findOne({
+      where: {
+        survey: { id: surveyId },
+        user: { id: userId },
+        survey_version: survey.version,
+      },
+    });
+
+    if (isExist) throw new BadRequestException('이미 참여한 설문입니다.');
+
     const isOptionEmpty = createResponseInput.find(
       (el) => el.optionId.length === 0,
     );
@@ -83,12 +98,20 @@ export class ResponseService {
           '해당 설문지에 속하지 않은 문항이 감지되었습니다.',
         );
       }
+
+      const optionData = [];
+
       el.optionId.forEach((id) => {
         if (!optionMap.has(id)) {
           throw new BadRequestException(
             '해당 설문지에 속하지 않은 선택지가 감지되었습니다.',
           );
         }
+
+        optionData.push({
+          content: optionMap.get(id)[0],
+          score: optionMap.get(id)[1],
+        });
       });
 
       if (el.optionId.length > 1 && !isMultiple) {
@@ -97,13 +120,11 @@ export class ResponseService {
         );
       }
 
-      return el.optionId.map((id) => {
-        return {
-          question_content: questionMap.get(el.questionId)[0],
-          option_content: optionMap.get(id)[0],
-          score: optionMap.get(id)[1],
-        };
-      });
+      return {
+        question_content: questionMap.get(el.questionId)[0],
+        multiple: isMultiple,
+        option_content: optionData,
+      };
     });
 
     const newResponse = this.responseRepository.create({
@@ -111,9 +132,12 @@ export class ResponseService {
       survey: surveyId,
     });
 
-    const totalScore = responseDetails.reduce((acc, cur) => {
-      return acc + cur.score;
-    }, 0);
+    let totalScore = 0;
+    responseDetails.forEach((data) => {
+      totalScore += data.option_content.reduce((acc, cur) => {
+        return acc + cur.score;
+      }, 0);
+    });
 
     const completeReponseDetails =
       await this.responseDetailService.createResponseDetail({
@@ -127,5 +151,106 @@ export class ResponseService {
       total_score: totalScore,
       responseDetails: completeReponseDetails,
     });
+  }
+
+  async update({ userId, responseId, updateResponseInput }): Promise<boolean> {
+    const responseData = await this.responseRepository.findOne({
+      where: { id: responseId },
+      relations: [
+        'user',
+        'survey',
+        'survey.questions',
+        'survey.questions.options',
+        'responseDetails',
+      ],
+    });
+
+    if (!responseData)
+      throw new NotFoundException('해당 답변 정보가 존재하지 않습니다.');
+
+    if (responseData.user.id !== userId)
+      throw new BadRequestException('본인의 답변만 수정할 수 있습니다.');
+
+    if (responseData.survey_version !== responseData.survey.version)
+      throw new BadRequestException(
+        '설문지의 현재 버전과 답변 기록의 설문지 버전이 다르면 수정할 수 없습니다. 새로운 답변을 작성해 주세요.',
+      );
+
+    const savedResponseDetailIds = responseData.responseDetails.map(
+      (el) => el.id,
+    );
+
+    const inputResponseDetailId = updateResponseInput.find(
+      (el) => !savedResponseDetailIds.includes(el.responseDetailId),
+    );
+
+    if (inputResponseDetailId)
+      throw new BadRequestException(
+        '해당 답변 목록에 포함되지 않은 상세 답변 데이터가 입력 되었습니다.',
+      );
+
+    const optionMap = new Map();
+
+    responseData.survey.questions.forEach((question) => {
+      question.options.forEach((option) =>
+        optionMap.set(option.id, [option.content, option.score]),
+      );
+    });
+
+    const responseDetailMap = new Map();
+    responseData.responseDetails.forEach((responseDetail) => {
+      responseDetailMap.set(responseDetail.id, responseDetail.multiple);
+    });
+
+    const responseDetailUpdateData = updateResponseInput.flatMap((data) => {
+      const isMultiple = responseDetailMap.get(data.responseDetailId);
+      if (data.optionId.length > 1 && !isMultiple) {
+        throw new BadRequestException(
+          '중복 답변이 허용되지 않는 문항이 있습니다.',
+        );
+      }
+
+      const result = data.optionId.map((el) => {
+        const [optionContent, optionScore] = optionMap.get(el) || '';
+
+        if (!optionContent)
+          throw new BadRequestException(
+            '해당 설문지에 속하지 않은 선택지가 감지되었습니다.',
+          );
+
+        return {
+          content: optionContent,
+          score: optionScore,
+        };
+      });
+
+      return {
+        id: data.responseDetailId,
+        option_content: result,
+      };
+    });
+
+    await this.responseDetailService.updateResponseDetail({
+      responseDetailUpdateData,
+    });
+
+    const newResponseData = await this.responseRepository.findOne({
+      where: { id: responseId },
+      relations: ['responseDetails', 'responseDetails.option_content'],
+    });
+
+    let totalScore = 0;
+    newResponseData.responseDetails.forEach((data) => {
+      totalScore += data.option_content.reduce((acc, cur) => {
+        return acc + cur.score;
+      }, 0);
+    });
+
+    await this.responseRepository.update(
+      { id: responseId },
+      { total_score: totalScore },
+    );
+
+    return true;
   }
 }

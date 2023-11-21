@@ -57,11 +57,13 @@ export class ResponseResolver {
   async updateResponse(
     @Context() context: IContext,
     @Args('responseId') responseId: string,
-    @Args('updateResponseInput') updateResponseInput: UpdateResponseInput,
+    @Args('updateResponseInput', { type: () => [UpdateResponseInput] })
+    updateResponseInput: UpdateResponseInput[],
   ): Promise<boolean> {
     return this.responseService.update({
       userId: context.req.user.id,
       responseId,
+      updateResponseInput,
     });
   }
 }
