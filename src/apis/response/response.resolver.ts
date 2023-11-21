@@ -78,4 +78,14 @@ export class ResponseResolver {
       responseId,
     });
   }
+
+  @UseGuards(GqlAuthGuard('access'))
+  @Mutation(() => Boolean)
+  async deleteResponseAllOfMine(
+    @Context() context: IContext, //
+  ): Promise<boolean> {
+    return this.responseService.deleteAllOfMine({
+      userId: context.req.user.id,
+    });
+  }
 }
