@@ -275,4 +275,10 @@ export class ResponseService {
 
     return result.affected ? true : false;
   }
+
+  async adminDeleteResponse({ responseId }): Promise<boolean> {
+    const result = await this.responseRepository.delete({ id: responseId });
+
+    return result.affected ? true : false;
+  }
 }
