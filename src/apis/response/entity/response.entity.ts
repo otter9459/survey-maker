@@ -5,7 +5,6 @@ import { User } from '../../user/entity/user.entity';
 import {
   Column,
   CreateDateColumn,
-  DeleteDateColumn,
   Entity,
   ManyToOne,
   OneToMany,
@@ -41,9 +40,6 @@ export class Response {
 
   @UpdateDateColumn()
   updatedAt: Date;
-
-  @DeleteDateColumn()
-  deletedAt: Date;
 
   @ManyToOne(() => Survey, (survey) => survey.responses, {
     onDelete: 'CASCADE',

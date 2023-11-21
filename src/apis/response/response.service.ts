@@ -253,4 +253,18 @@ export class ResponseService {
 
     return true;
   }
+
+  async delete({ userId, responseId }): Promise<boolean> {
+    const responseData = await this.responseRepository.findOne({
+      where: { id: responseId },
+      relations: ['user'],
+    });
+
+    if (responseData.user.id !== userId)
+      throw new BadRequestException('본인의 답변만 삭제할 수 있습니다.');
+
+    const result = await this.responseRepository.delete({ id: responseId });
+
+    return result.affected ? true : false;
+  }
 }
