@@ -23,7 +23,7 @@ export class ResponseService {
   async fetchOne({ userId, responseId }): Promise<Response> {
     const responseData = await this.responseRepository.findOne({
       where: { id: responseId },
-      relations: ['user', 'responseDetails'],
+      relations: ['user', 'survey', 'responseDetails'],
     });
 
     if (!responseData)
@@ -33,6 +33,16 @@ export class ResponseService {
       throw new BadRequestException('본인의 답변만 조회할 수 있습니다.');
 
     return responseData;
+  }
+
+  async fetchAll({ userId, page }): Promise<Response[]> {
+    return await this.responseRepository.find({
+      where: { user: { id: userId } },
+      relations: ['survey'],
+      order: { createdAt: 'DESC' },
+      skip: (page - 1) * 10,
+      take: 10,
+    });
   }
 
   async create({ userId, surveyId, createResponseInput }): Promise<Response> {

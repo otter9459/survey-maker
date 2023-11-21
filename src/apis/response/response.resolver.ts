@@ -25,11 +25,11 @@ export class ResponseResolver {
   }
 
   @UseGuards(GqlAuthGuard('access'))
-  @Query(() => Response)
+  @Query(() => [Response])
   async fetchResponseOfMineList(
     @Context() context: IContext,
     @Args('page') page: number,
-  ): Promise<Response> {
+  ): Promise<Response[]> {
     return this.responseService.fetchAll({
       userId: context.req.user.id,
       page,
