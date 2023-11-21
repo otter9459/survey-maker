@@ -9,6 +9,7 @@ import { SurveyService } from '../survey/survey.service';
 import { IQuestionServiceCreate } from './interfaces/question-service.interface';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SURVEY_STATUS } from '../survey/entity/survey.entity';
+import { ForbiddenError } from 'apollo-server-express';
 
 @Injectable()
 export class QuestionService {
@@ -42,6 +43,13 @@ export class QuestionService {
 
     if (ordered.includes(fixed_order))
       throw new BadRequestException('이미 해당 번호를 가진 문항이 존재합니다.');
+
+    const contentExist = await this.questionRepository.find({
+      where: { content },
+    });
+
+    if (contentExist.length)
+      throw new ForbiddenError('이미 같은 내용을 가진 문항이 존재합니다.');
 
     return await this.questionRepository.save({
       content,

@@ -7,7 +7,10 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { SURVEY_STATUS, Survey } from './entity/survey.entity';
 import { Not, Repository } from 'typeorm';
-import { ISurveyServiceReturn } from './interfaces/survey-return.interface';
+import {
+  ICompleteSurveyReturn,
+  ISurveyServiceReturn,
+} from './interfaces/survey-return.interface';
 
 @Injectable()
 export class SurveyService {
@@ -41,26 +44,62 @@ export class SurveyService {
     });
   }
 
-  async fetchComplete({ adminId, surveyId, version }) {
-    // 미완성, 답변까지 모두 제작되면 진행 - feature#5 브랜치
+  async fetchComplete({ surveyId, version }): Promise<ICompleteSurveyReturn> {
     const survey = await this.findOne({ surveyId });
-    if (survey.author.id !== adminId)
-      throw new BadRequestException(
-        '본인이 제작한 설문의 결과만 볼 수 있습니다.',
-      );
 
-    if (survey.status !== SURVEY_STATUS.COMPLETE && version !== survey.version)
+    if (version > survey.version)
+      throw new ForbiddenException('해당 버전은 존재하지 않습니다.');
+
+    if (survey.status !== SURVEY_STATUS.COMPLETE && version === survey.version)
       throw new ForbiddenException('해당 설문은 완료되지 않았습니다.');
 
-    // const list = await this.surveyRespository.findOne({
-    //   where: { id: surveyId, responses: { survey_version: version } },
-    //   relations: ['responses', 'responses.responseDetails'],
-    // });
+    const list = await this.surveyRespository.findOne({
+      where: { id: surveyId, responses: { survey_version: version } },
+      relations: [
+        'responses',
+        'responses.responseDetails',
+        'responses.responseDetails.option_content',
+      ],
+    });
 
-    // list.responses[0].responseDetails[0].option_content;
-    // list.responses[0].responseDetails[0].question_content;
-    // list.responses[0].total_score;
-    // 위 세가지를 사용해서 문항 정리, 선택지 정리, 선택지 비율 계산, 총점 평균 계산 알고리즘 제작 필요
+    const optionCount = new Map();
+    list.responses.forEach((el) => {
+      el.responseDetails.forEach((ele) => {
+        if (!optionCount.has(ele.question_content))
+          optionCount.set(ele.question_content, {});
+        const count = optionCount.get(ele.question_content);
+        ele.option_content.forEach((element) => {
+          if (!count[element.content]) count[element.content] = 1;
+          else count[element.content]++;
+        });
+        optionCount.set(ele.question_content, count);
+      });
+    });
+
+    const searchedVersion = list.responses[0].survey_version;
+    const searchedTitle = list.responses[0].survey_title;
+    const searchedOptionsCount = [];
+    optionCount.forEach((val, key) => {
+      const ratios = [];
+      for (const num in val) {
+        const avg = Math.floor((val[num] / optionCount.size) * 100);
+        ratios.push({ option: num, ratio: avg });
+      }
+      searchedOptionsCount.push({ question: key, ratios: ratios });
+    });
+    const searchedScoreAverage = (
+      list.responses.reduce((acc, cur) => {
+        return acc + cur.total_score;
+      }, 0) / list.responses.length
+    ).toFixed(1);
+
+    return {
+      id: surveyId,
+      version: searchedVersion,
+      title: searchedTitle,
+      optionRatio: searchedOptionsCount,
+      scoreAvg: searchedScoreAverage,
+    };
   }
 
   async create({ context, createSurveyInput }): Promise<Survey> {

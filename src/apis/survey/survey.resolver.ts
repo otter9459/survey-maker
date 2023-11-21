@@ -6,7 +6,10 @@ import { Survey } from './entity/survey.entity';
 import { IContext } from 'src/commons/interfaces/context';
 import { CreateSurveyInput } from './dto/create-survey.input';
 import { UpdateSurveyInput } from './dto/update-survey.input';
-import { ISurveyServiceReturn } from './interfaces/survey-return.interface';
+import {
+  ICompleteSurveyReturn,
+  ISurveyServiceReturn,
+} from './interfaces/survey-return.interface';
 
 @Resolver()
 export class SurveyResolver {
@@ -30,15 +33,13 @@ export class SurveyResolver {
   }
 
   @UseGuards(GqlAuthGuard('admin'))
-  @Query(() => Survey)
+  @Query(() => ICompleteSurveyReturn)
   async fetchCompleteSurvey(
-    @Context() context: IContext, //
     @Args('surveyId') surveyId: string,
-    @Args('version') version: number,
-  ) {
+    @Args('version') version: string,
+  ): Promise<ICompleteSurveyReturn> {
     // 미완성, 답변까지 모두 제작되면 진행 - feature#5 브랜치
     return this.surveyService.fetchComplete({
-      adminId: context.req.user.id,
       surveyId,
       version,
     });
