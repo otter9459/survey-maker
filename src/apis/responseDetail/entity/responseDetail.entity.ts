@@ -28,7 +28,9 @@ export class ResponseDetail {
   @Field(() => [ResponseDetailOption])
   option_content: ResponseDetailOption[];
 
-  @ManyToOne(() => Response, (response) => response.responseDetails)
+  @ManyToOne(() => Response, (response) => response.responseDetails, {
+    onDelete: 'CASCADE',
+  })
   @Field(() => Response)
   response: Response;
 }
@@ -51,6 +53,9 @@ export class ResponseDetailOption {
   @ManyToOne(
     () => ResponseDetail,
     (responseDetail) => responseDetail.option_content,
+    {
+      onDelete: 'CASCADE',
+    },
   )
   responseDetail: ResponseDetail;
 }
