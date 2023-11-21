@@ -88,4 +88,12 @@ export class ResponseResolver {
       userId: context.req.user.id,
     });
   }
+
+  @UseGuards(GqlAuthGuard('admin'))
+  @Mutation(() => Boolean)
+  async deleteResponseAdmin(
+    @Args('responseId') responseId: string, //
+  ): Promise<boolean> {
+    return this.responseService.adminDeleteResponse({ responseId });
+  }
 }
