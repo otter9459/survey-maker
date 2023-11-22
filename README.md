@@ -71,9 +71,15 @@ docker-compose up --build
 
 ## ERD
 
+![survey_maker-erd](https://github.com/otter9459/survey-maker/blob/dev/public/survey-ERD.png?raw=true)
+
+[원본 ERD 링크](https://www.erdcloud.com/p/6pzGz6GtWs8aAH86W)
+
 <br>
 
 ## System architecture
+
+![survey_maker-system_architecture](https://github.com/otter9459/survey-maker/blob/dev/public/survey-system-arcitecture.png?raw=true)
 
 <br>
 
