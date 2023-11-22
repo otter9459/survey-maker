@@ -37,6 +37,11 @@ export class QuestionService {
     if (!survey)
       throw new NotFoundException('등록할 설문지의 정보가 존재하지 않습니다.');
 
+    if (survey.status === SURVEY_STATUS.ISSUANCE)
+      throw new BadRequestException(
+        '발행 상태의 설문에는 문항을 추가할 수 없습니다.',
+      );
+
     const contentExist = await this.questionRepository.find({
       where: { content },
     });
@@ -64,12 +69,6 @@ export class QuestionService {
         '발행 상태인 설문의 문항은 수정이 불가능합니다.',
       );
 
-    if (question.survey.status === SURVEY_STATUS.COMPLETE) {
-      throw new BadRequestException(
-        '완료된 설문은 수정이 불가능합니다. 설문지 버전 업데이트 후 재시도 해주세요.',
-      );
-    }
-
     const exist = question.survey.questions.find(
       (el) => el.priority === priority,
     );
@@ -88,6 +87,16 @@ export class QuestionService {
   }
 
   async delete({ questionId }): Promise<boolean> {
+    const question = await this.questionRepository.findOne({
+      where: { id: questionId },
+      relations: ['survey'],
+    });
+
+    if (question.survey.status === SURVEY_STATUS.ISSUANCE)
+      throw new BadRequestException(
+        '발행 상태인 설문의 문항은 삭제가 불가능합니다.',
+      );
+
     const result = await this.questionRepository.delete({ id: questionId });
     return result.affected ? true : false;
   }

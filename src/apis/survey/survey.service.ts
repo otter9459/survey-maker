@@ -3,6 +3,7 @@ import {
   ConflictException,
   ForbiddenException,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SURVEY_STATUS, Survey } from './entity/survey.entity';
@@ -63,6 +64,9 @@ export class SurveyService {
       ],
     });
 
+    if (!list)
+      throw new NotFoundException('해당 설문에는 답변이 존재하지 않습니다.');
+
     const optionCount = new Map();
     list.responses.forEach((el) => {
       el.responseDetails.forEach((ele) => {
@@ -99,7 +103,7 @@ export class SurveyService {
       version: searchedVersion,
       title: searchedTitle,
       optionRatio: searchedOptionsCount,
-      scoreAvg: searchedScoreAverage,
+      scoreAvg: Number(searchedScoreAverage),
     };
   }
 
@@ -137,11 +141,7 @@ export class SurveyService {
       );
     }
 
-    if (survey.status === SURVEY_STATUS.COMPLETE) {
-      throw new BadRequestException(
-        '완료된 설문은 수정이 불가능합니다. 설문지 버전 업데이트 후 재시도 해주세요.',
-      );
-    } else if (survey.status === SURVEY_STATUS.ISSUANCE && survey.respondant) {
+    if (survey.status === SURVEY_STATUS.ISSUANCE && survey.respondant) {
       throw new BadRequestException(
         '발행된 설문에 참여자가 존재하는 경우 내용을 수정할 수 없습니다. 설문을 종료, 버전 업데이트 후 재시도 해주세요.',
       );

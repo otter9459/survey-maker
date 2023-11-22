@@ -144,6 +144,9 @@ export class ResponseService {
         responseDetails,
       });
 
+    if (survey.respondant - 1 === survey.target_number)
+      this.surveyService.manualComplete({ surveyId });
+
     return this.responseRepository.save({
       ...newResponse,
       survey_title: survey.title,
@@ -174,6 +177,11 @@ export class ResponseService {
     if (responseData.survey_version !== responseData.survey.version)
       throw new BadRequestException(
         '설문지의 현재 버전과 답변 기록의 설문지 버전이 다르면 수정할 수 없습니다. 새로운 답변을 작성해 주세요.',
+      );
+
+    if (responseData.survey.status !== SURVEY_STATUS.ISSUANCE)
+      throw new BadRequestException(
+        '해당 설문지가 발행 상태가 아니기 때문에 수정이 불가능합니다.',
       );
 
     const savedResponseDetailIds = responseData.responseDetails.map(

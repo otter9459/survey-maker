@@ -39,6 +39,6 @@ export class ICompleteSurveyReturn {
   @Field(() => [OptionRatio])
   optionRatio: OptionRatio[];
 
-  @Field(() => String)
-  scoreAvg: string;
+  @Field(() => Number)
+  scoreAvg: number;
 }

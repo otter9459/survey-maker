@@ -36,9 +36,8 @@ export class SurveyResolver {
   @Query(() => ICompleteSurveyReturn)
   async fetchCompleteSurvey(
     @Args('surveyId') surveyId: string,
-    @Args('version') version: string,
+    @Args('version') version: number,
   ): Promise<ICompleteSurveyReturn> {
-    // 미완성, 답변까지 모두 제작되면 진행 - feature#5 브랜치
     return this.surveyService.fetchComplete({
       surveyId,
       version,
@@ -65,16 +64,6 @@ export class SurveyResolver {
     return this.surveyService.update({
       surveyId,
       updateSurveyInput,
-    });
-  }
-
-  @UseGuards(GqlAuthGuard('admin'))
-  @Mutation(() => Boolean)
-  async updateSurveyVersion(
-    @Args('surveyId') surveyId: string,
-  ): Promise<boolean> {
-    return this.surveyService.updateVersion({
-      surveyId,
     });
   }
 

@@ -30,6 +30,11 @@ export class OptionService {
     if (!question)
       throw new NotFoundException('등록할 문항의 정보가 존재하지 않습니다.');
 
+    if (question.survey.status === SURVEY_STATUS.ISSUANCE)
+      throw new BadRequestException(
+        '발행 상태의 설문에는 선택지를 추가할 수 없습니다.',
+      );
+
     return await this.optionRepository.save({
       content,
       score,
@@ -49,12 +54,6 @@ export class OptionService {
       throw new BadRequestException(
         '발행 상태인 설문의 선택지는 수정이 불가능합니다.',
       );
-
-    if (option.question.survey.status === SURVEY_STATUS.COMPLETE) {
-      throw new BadRequestException(
-        '완료된 설문은 수정이 불가능합니다. 설문지 버전 업데이트 후 재시도 해주세요.',
-      );
-    }
 
     if (option.question.options.length < priority)
       throw new BadRequestException(
@@ -79,6 +78,16 @@ export class OptionService {
   }
 
   async delete({ optionId }): Promise<boolean> {
+    const option = await this.optionRepository.findOne({
+      where: { id: optionId },
+      relations: ['question', 'question.survey'],
+    });
+
+    if (option.question.survey.status === SURVEY_STATUS.ISSUANCE)
+      throw new BadRequestException(
+        '발행 상태인 설문의 선택지는 삭제가 불가능합니다.',
+      );
+
     const result = await this.optionRepository.delete({ id: optionId });
     return result.affected ? true : false;
   }
