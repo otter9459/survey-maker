@@ -1,0 +1,27 @@
+version: '3.7'
+
+services:
+  backend-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./src:/survey-maker/src
+    ports:
+      - 4000:4000
+    env_file:
+      - ./.env.docker
+
+  database-server:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: 'survey-db'
+      POSTGRES_USER: 'root'
+      POSTGRES_PASSWORD: 'root'
+    ports:
+      - 5432:5432
+
+  redis-server:
+    image: redis:latest
+    ports:
+      - 6379:6379

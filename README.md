@@ -1,73 +1,260 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# 사전과제
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+설문지 제작, 관리 및 답변 제출 서비스
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+<br>
 
-## Description
+## 실행 방법
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+### 1. Docker 및 docker-compose 설치
 
-## Installation
+프로젝트를 실행하기 위해서는 Docker 및 docker-compose가 필요합니다. 아래 링크를 참고하여 설치해주세요.
 
-```bash
-$ yarn install
-```
+- [Docker 설치 가이드](https://docs.docker.com/get-docker/)
+- [docker-compose 설치 가이드](https://docs.docker.com/compose/install/)
 
-## Running the app
+### 2. Docker Desktop 설치
 
-```bash
-# development
-$ yarn run start
+만약 Windows 또는 macOS를 사용하고 있다면 Docker Desktop을 설치 후 실행해 주세요.
 
-# watch mode
-$ yarn run start:dev
+- [Docker Desktop 다운로드](https://www.docker.com/products/docker-desktop)
 
-# production mode
-$ yarn run start:prod
-```
+### 3. 환경변수 설정
 
-## Test
+- .env.docker
+
+  ```yml
+  # Docker 설정
+    DATABASE_TYPE=postgres
+    DATABASE_HOST=database-server
+    DATABASE_PORT=5432
+    DATABASE_USERNAME=${name}
+    DATABASE_PASSWORD=${password}
+    DATABASE_DATABASE=survey-db
+
+  # JWT Secret
+    JWT_ACCESS_KEY=${hashing-key}
+    JWT_ADMIN_KEY=${hashing-key}
+  ```
+
+### 4. 프로젝트 빌드 및 실행
 
 ```bash
-# unit tests
-$ yarn run test
-
-# e2e tests
-$ yarn run test:e2e
-
-# test coverage
-$ yarn run test:cov
+docker-compose up --build
 ```
 
-## Support
+<br>
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## 사용 기술 스택
 
-## Stay in touch
+<img src="https://img.shields.io/badge/typescript-3178C6?style=for-the-badge&logo=Typescript&logoColor=white">
+<img src="https://img.shields.io/badge/nestjs-E0234E?style=for-the-badge&logo=nestjs&logoColor=white">
+<img src="https://img.shields.io/badge/typeorm-262627?style=for-the-badge&logo=typeorm&logoColor=white">
+<img src="https://img.shields.io/badge/postgresql-4169E1?style=for-the-badge&logo=postgresql&logoColor=white">
+<img src="https://img.shields.io/badge/graphql-E10098?style=for-the-badge&logo=graphql&logoColor=white">
+<img src="https://img.shields.io/badge/apollo-311C87?style=for-the-badge&logo=apollographql&logoColor=white">
+<img src="https://img.shields.io/badge/redis-DC382D?style=for-the-badge&logo=redis&logoColor=white">
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+<br>
 
-## License
+## 주요 기능
 
-Nest is [MIT licensed](LICENSE).
+1. 사용자 로그인
+2. 관리자 로그인
+3. 설문지 등록
+4. 문항 등록
+5. 선택지 등록
+6. 답변 제출
+7. 답변 조회
+
+<br>
+
+## ERD
+
+![survey_maker-erd](https://github.com/otter9459/survey-maker/blob/dev/public/survey-ERD.png?raw=true)
+
+[원본 ERD 링크](https://www.erdcloud.com/p/6pzGz6GtWs8aAH86W)
+
+<br>
+
+## System architecture
+
+![survey_maker-system_architecture](https://github.com/otter9459/survey-maker/blob/dev/public/survey-system-arcitecture.png?raw=true)
+
+<br>
+
+## API-Docs
+
+### [API 정의서](https://principled-ox-c77.notion.site/API-9c3f8202baf74973b7435258711d18d9?pvs=4)
+
+### [GraphQL Playground](http://localhost:4000/graphql) (docker-compose 컨테이너 실행 후 접속)
+
+<br>
+
+## 테스트 예시
+
+### 관리자 회원가입
+
+```graphql
+mutation {
+  createAdmin(
+    createAdminInput: {
+      name: "운영자"
+      email: "admin@survey.com"
+      password: "1234"
+    }
+  )
+}
+```
+
+### 관리자 로그인
+
+```graphql
+mutation {
+  loginAdmin(
+    email: "admin@survey.com"
+    password: "1234"
+  )
+}
+```
+
+### 설문지 생성 (관리자 토큰)
+
+```graphql
+mutation {
+  createSurvey(
+    createSurveyInput: {
+      title: "새로운 설문입니다."
+      description: "설문 설명입니다."
+      target_number: 10
+    }
+  )
+}
+```
+
+### 문항 생성 (관리자 토큰)
+
+```graphql
+mutation {
+  createQuestion(
+    surveyId: "${survey id}"
+    createQuestionInput: {
+      content: "1번 문항"
+      multiple: false
+    }
+  )
+}
+```
+
+### 선택지 생성 (관리자 토큰)
+
+```graphql
+mutation {
+  createOption(
+    questionId: "${question id}"
+    createOptionInput: {
+      content: "1번"
+      score: ONE
+    }
+  )
+}
+```
+
+### 설문지 발행 (관리자 토큰)
+
+```graphql
+mutation {
+  issuanceSurvey(
+    surveyId: "${survey id}"
+  )
+}
+```
+
+### 유저 회원가입
+
+```graphql
+mutation {
+  createUser(
+    createUserInput: {
+      name: "철수"
+      age: 20
+      gender: MALE
+      email: "a@a.com"
+      password: "1111"
+    }
+  )
+}
+```
+
+### 유저 로그인
+
+```graphql
+mutation {
+  loginUser(
+    email: "a@a.com"
+    password: "1111"
+  )
+}
+```
+
+### 답변 생성 (유저 토큰)
+
+```graphql
+mutation {
+  createResponse(
+    surveyId: "${survey id}"
+    createResponseInput: [
+      { 
+        questionId: "${question id}"
+        optionId: [
+          "${option id}"
+        ]
+      }
+      {
+        questionId: "${question id}"
+        optionId: [
+          "${option id}"
+          "${option id}"
+        ]
+      }
+      {
+        questionId: "${question id}"
+        optionId: [
+          "${option id}"
+        ]
+      }
+    ]
+  )
+}
+```
+
+### 유저 답변 조회 (유저 토큰)
+
+```graphql
+query {
+  fetchResponseOfMine(
+    responseId: "${response id}"
+  )
+}
+```
+
+### 설문지 종료 (관리자 토큰)
+
+```graphql
+mutation {
+  manualCompleteSurvey(
+    surveyId: "${survey id}"
+  )
+}
+```
+
+### 관리자 답변 조회 (관리자 토큰)
+
+```graphql
+query {
+  fetchCompleteSurvey(
+    surveyId: "${survey id}"
+    version: "0.1"
+  )
+}
+```
