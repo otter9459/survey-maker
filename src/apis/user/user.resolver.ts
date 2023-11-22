@@ -53,12 +53,4 @@ export class UserResolver {
       newPassword,
     });
   }
-
-  @UseGuards(GqlAuthGuard('access'))
-  @Mutation(() => Boolean)
-  async resignUser(
-    @Context() context: IContext, //
-  ): Promise<boolean> {
-    return this.userService.resign({ id: context.req.user.id });
-  }
 }
