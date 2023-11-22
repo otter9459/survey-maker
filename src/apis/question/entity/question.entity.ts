@@ -24,10 +24,10 @@ export class Question {
   content: string;
 
   @IsInt({ message: 'Target number must be an integer.' })
-  @Min(0, { message: 'Target number must be greater than or equal to 0.' })
-  @Column()
-  @Field(() => Number)
-  fixed_order: number;
+  @Min(1, { message: 'Target number must be greater than or equal to 1.' })
+  @Column({ nullable: true, default: null })
+  @Field(() => Number, { nullable: true })
+  priority: number;
 
   @Column({ default: false })
   @Field(() => Boolean)

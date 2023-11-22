@@ -31,18 +31,11 @@ export class QuestionService {
     surveyId,
     createQuestionInput,
   }: IQuestionServiceCreate): Promise<Question> {
-    const { content, fixed_order, multiple } = createQuestionInput;
+    const { content, multiple } = createQuestionInput;
 
     const survey = await this.surveyService.findOne({ surveyId });
     if (!survey)
       throw new NotFoundException('등록할 설문지의 정보가 존재하지 않습니다.');
-
-    const ordered = survey.questions
-      .filter((el) => el.fixed_order !== null)
-      .map((ele) => ele.fixed_order);
-
-    if (ordered.includes(fixed_order))
-      throw new BadRequestException('이미 해당 번호를 가진 문항이 존재합니다.');
 
     const contentExist = await this.questionRepository.find({
       where: { content },
@@ -53,14 +46,13 @@ export class QuestionService {
 
     return await this.questionRepository.save({
       content,
-      fixed_order,
       multiple,
       survey,
     });
   }
 
   async update({ questionId, updateQuestionInput }): Promise<boolean> {
-    const { fixed_order } = updateQuestionInput;
+    const { priority } = updateQuestionInput;
 
     const question = await this.questionRepository.findOne({
       where: { id: questionId },
@@ -72,12 +64,20 @@ export class QuestionService {
         '발행 상태인 설문의 문항은 수정이 불가능합니다.',
       );
 
+    if (question.survey.status === SURVEY_STATUS.COMPLETE) {
+      throw new BadRequestException(
+        '완료된 설문은 수정이 불가능합니다. 설문지 버전 업데이트 후 재시도 해주세요.',
+      );
+    }
+
     const exist = question.survey.questions.find(
-      (el) => el.fixed_order === fixed_order,
+      (el) => el.priority === priority,
     );
 
     if (exist)
-      throw new BadRequestException('이미 해당 번호를 가진 문항이 존재합니다.');
+      throw new BadRequestException(
+        '이미 해당 우선 순위를 가진 문항이 존재합니다.',
+      );
 
     const result = await this.questionRepository.update(
       { id: questionId },

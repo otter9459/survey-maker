@@ -23,6 +23,7 @@ export class SurveyService {
     const result = await this.surveyRespository.findOne({
       where: { id: surveyId },
       relations: ['author', 'questions', 'questions.options', 'responses'],
+      order: { questions: { priority: 'ASC', options: { priority: 'ASC' } } },
     });
 
     return { ...result, respondant: result.responses.length };
@@ -30,7 +31,7 @@ export class SurveyService {
 
   async fetchList({ page }): Promise<ISurveyServiceReturn[]> {
     const results = await this.surveyRespository.find({
-      relations: ['author', 'questions', 'questions.options', 'responses'],
+      relations: ['author', 'questions', 'responses'],
       order: { createdAt: 'DESC' },
       skip: (page - 1) * 10,
       take: 10,
