@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AdminModule } from './apis/admin/admin.module';
 import { GraphQLModule } from '@nestjs/graphql';
@@ -48,7 +46,7 @@ import { redisStore } from 'cache-manager-redis-yet';
       isGlobal: true,
     }),
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
