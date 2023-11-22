@@ -23,7 +23,7 @@ export class QuestionService {
   async fetchOne({ questionId }): Promise<Question> {
     return this.questionRepository.findOne({
       where: { id: questionId },
-      relations: ['options'],
+      relations: ['options', 'survey'],
     });
   }
 

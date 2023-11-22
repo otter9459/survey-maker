@@ -50,7 +50,7 @@ export class ResponseService {
     });
   }
 
-  async create({ userId, surveyId, createResponseInput }): Promise<Response> {
+  async create({ userId, surveyId, createResponseInput }): Promise<boolean> {
     const survey = await this.surveyService.findOne({ surveyId });
     if (!survey)
       throw new NotFoundException('등록할 설문지의 정보가 존재하지 않습니다.');
@@ -147,13 +147,17 @@ export class ResponseService {
     if (survey.respondant - 1 === survey.target_number)
       this.surveyService.manualComplete({ surveyId });
 
-    return this.responseRepository.save({
+    console.log(completeReponseDetails);
+
+    await this.responseRepository.save({
       ...newResponse,
       survey_title: survey.title,
       survey_version: survey.version,
       total_score: totalScore,
       responseDetails: completeReponseDetails,
     });
+
+    return true;
   }
 
   async update({ userId, responseId, updateResponseInput }): Promise<boolean> {

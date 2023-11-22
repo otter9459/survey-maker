@@ -38,13 +38,13 @@ export class ResponseResolver {
   }
 
   @UseGuards(GqlAuthGuard('access'))
-  @Mutation(() => Response)
+  @Mutation(() => Boolean)
   async createResponse(
     @Context() context: IContext,
     @Args('surveyId') surveyId: string,
     @Args('createResponseInput', { type: () => [CreateResponseInput] })
     createResponseInput: CreateResponseInput[],
-  ): Promise<Response> {
+  ): Promise<boolean> {
     return this.responseService.create({
       userId: context.req.user.id,
       surveyId,

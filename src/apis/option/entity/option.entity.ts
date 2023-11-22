@@ -40,7 +40,6 @@ export class Option {
   priority: number;
 
   @Column({ type: 'enum', enum: OPTION_SCORE })
-  @Field(() => OPTION_SCORE)
   score: OPTION_SCORE;
 
   @CreateDateColumn()
