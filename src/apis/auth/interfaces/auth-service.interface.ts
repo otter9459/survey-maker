@@ -4,4 +4,5 @@ import { User } from 'src/apis/user/entity/user.entity';
 export interface IAuthServiceGetAccessToken {
   user: User | Admin;
   key: string;
+  keyid: string;
 }
