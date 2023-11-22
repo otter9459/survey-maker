@@ -28,8 +28,8 @@
     DATABASE_TYPE=postgres
     DATABASE_HOST=database-server
     DATABASE_PORT=5432
-    DATABASE_USERNAME=${name}
-    DATABASE_PASSWORD=${password}
+    DATABASE_USERNAME=root
+    DATABASE_PASSWORD=root
     DATABASE_DATABASE=survey-db
 
   # JWT Secret

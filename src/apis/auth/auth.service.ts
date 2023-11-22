@@ -111,4 +111,20 @@ export class AuthService {
       { secret: key, keyid, expiresIn: '1d' }, // 원활한 테스트를 위해 긴 유효기간 적용
     );
   }
+
+  async resignUser({ context }): Promise<boolean> {
+    await this.logout({ context });
+
+    const result = await this.userService.resign({ id: context.req.user.id });
+
+    return result;
+  }
+
+  async resignAdmin({ context }): Promise<boolean> {
+    await this.logout({ context });
+
+    const result = await this.adminService.resign({ id: context.req.user.id });
+
+    return result;
+  }
 }
