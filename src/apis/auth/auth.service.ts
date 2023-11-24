@@ -84,7 +84,7 @@ export class AuthService {
         jwtKey,
       ) as jwt.JwtPayload;
 
-      const accessTtl = correctAccess.exp - correctAccess.iat;
+      const accessTtl = (correctAccess.exp - correctAccess.iat) * 1000;
 
       await this.cacheManager.set(
         `accessToken:${accessToken}`, //
